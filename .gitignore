@@ -1,0 +1,11 @@
+bin/
+out/
+.idea/
+.settings/
+META-INF/
+saves/
+logs/
+.classpath
+.project
+*.iml
+gameSettings.data
