@@ -2,6 +2,7 @@ package system;
 
 import objects.Wall;
 import objects.tetrominos.Tetromino_I;
+import objects.tetrominos.Tetromino_J;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;

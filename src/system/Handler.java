@@ -1,9 +1,11 @@
 package system;
 
 import objects.tetrominos.Tetromino_I;
+import objects.tetrominos.Tetromino_J;
 
 import java.awt.*;
 import java.util.LinkedList;
+import java.util.Random;
 
 public class Handler {
 	LinkedList<GameObject> objects = new LinkedList<>();
@@ -16,11 +18,9 @@ public class Handler {
 		if(current_tetromino != null) {
 			if (timer >= 60) {
 				timer = 0;
-				System.out.println("move check");
 				if (canMove(0,1)) {
 					current_tetromino.setY(current_tetromino.getY() + Game.TILESIZE);
 				} else {
-					System.out.println("plant tetromino");
 					plantTetromino();
 				}
 			}
@@ -75,8 +75,38 @@ public class Handler {
 		}
 	}
 
+	public void moveTetrominoToBottom() {
+		int lowestObjectY = Game.SCREEN_HEIGHT;
+		for(GameObject cube : ((Tetromino)current_tetromino).getCubes()) {
+			for(GameObject object : objects) {
+				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
+					if(object.getX() == cube.getX() && object.getY() > cube.getY()) {
+						if(object.getY() < lowestObjectY) {
+							lowestObjectY = object.getY();
+						}
+					}
+				}
+			}
+		}
+		if(lowestObjectY > Game.TILESIZE) {
+			current_tetromino.setY(lowestObjectY - Game.TILESIZE);
+			plantTetromino();
+			timer = 0;
+		}
+	}
+
 	private void plantTetromino() {
 		objects.addAll(((Tetromino)current_tetromino).getCubes());
-		current_tetromino = new Tetromino_I(64, 64);
+		if(new Random().nextInt(2) == 0) {
+			current_tetromino = new Tetromino_I(64, 64);
+		} else {
+			current_tetromino = new Tetromino_J(64, 64);
+		}
+
+		checkFilledRow();
+	}
+
+	private void checkFilledRow() {
+		System.out.println("check if a row is filled");
 	}
 }

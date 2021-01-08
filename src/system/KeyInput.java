@@ -18,6 +18,9 @@ public class KeyInput extends KeyAdapter {
 		if(e.getKeyCode() == KeyEvent.VK_DOWN) {
 			handler.moveTetromino(0, 1);
 		}
+		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
+			handler.moveTetrominoToBottom();
+		}
 	}
 
 	public void keyReleased(KeyEvent e) {
