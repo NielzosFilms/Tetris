@@ -1,20 +1,36 @@
 package system;
 
+import objects.Wall;
+import objects.tetrominos.Tetromino_I;
+
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 
 public class Game extends Canvas implements Runnable {
-	public static final int SCREEN_WIDTH = 300, SCREEN_HEIGHT = 600;
+	public static final int TILESIZE = 32;
+	public static final int SCREEN_WIDTH = TILESIZE*12, SCREEN_HEIGHT = TILESIZE*22;
 	public static final String TITLE = "Tetris | NielzosFilms";
 
-	public static final int TILESIZE = 24;
 
 	public static Thread thread;
 	public static Canvas canvas;
 	public static boolean running = true;
 	public static int current_fps = 0;
 
+	public static Handler handler = new Handler();
+
 	public Game() {
+		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
+			handler.addObject(new Wall(x, 0));
+			handler.addObject(new Wall(x, SCREEN_HEIGHT-TILESIZE));
+		}
+		for(int y=TILESIZE; y<SCREEN_HEIGHT-TILESIZE; y+=TILESIZE) {
+			handler.addObject(new Wall(0, y));
+			handler.addObject(new Wall(SCREEN_WIDTH-TILESIZE, y));
+		}
+
+		handler.addObject(new Tetromino_I(64, 64));
+
 		new Window(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE, this);
 	}
 
@@ -63,7 +79,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void tick() {
-
+		handler.tick();
 	}
 
 	private void render() {
@@ -78,8 +94,11 @@ public class Game extends Canvas implements Runnable {
 		g.setColor(ColorPalette.black_dark_blue.color);
 		g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-		g.setColor(ColorPalette.gray.color);
-		g.fillRect(TILESIZE, TILESIZE, TILESIZE, TILESIZE);
+		handler.render(g);
+
+		g.setFont(new Font("Arial", Font.PLAIN, 10));
+		g.setColor(ColorPalette.white.color);
+		g.drawString(String.valueOf(current_fps), 0, 10);
 
 		g.dispose();
 		g2d.dispose();
