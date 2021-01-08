@@ -4,14 +4,15 @@ import objects.Tetromino_Cube;
 import system.ColorPalette;
 import system.GameObject;
 import system.ID;
+import system.Tetromino;
 
 import java.awt.*;
 import java.util.LinkedList;
 
-public class Tetromino_I extends GameObject {
+public class Tetromino_I extends GameObject implements Tetromino {
 	private final Color COLOR = ColorPalette.light_blue.color;
 	private final Color BORDER_COLOR = ColorPalette.blue.color;
-	private LinkedList<Tetromino_Cube> cubes = new LinkedList<Tetromino_Cube>();
+	private LinkedList<GameObject> cubes = new LinkedList<GameObject>();
 
 	private int timer = 0;
 
@@ -26,19 +27,14 @@ public class Tetromino_I extends GameObject {
 
 	@Override
 	public void tick() {
-		if(timer >= 60) {
-			timer = 0;
-			y += TILESIZE;
-		}
-		for(Tetromino_Cube cube : cubes) {
+		for(GameObject cube : cubes) {
 			cube.tick();
 		}
-		timer++;
 	}
 
 	@Override
 	public void render(Graphics g) {
-		for(Tetromino_Cube cube : cubes) {
+		for(GameObject cube : cubes) {
 			cube.render(g);
 		}
 	}
@@ -46,5 +42,10 @@ public class Tetromino_I extends GameObject {
 	@Override
 	public Rectangle getBounds() {
 		return null;
+	}
+
+	@Override
+	public LinkedList<GameObject> getCubes() {
+		return cubes;
 	}
 }

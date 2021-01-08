@@ -11,13 +11,15 @@ public class Game extends Canvas implements Runnable {
 	public static final int SCREEN_WIDTH = TILESIZE*12, SCREEN_HEIGHT = TILESIZE*22;
 	public static final String TITLE = "Tetris | NielzosFilms";
 
-
 	public static Thread thread;
 	public static Canvas canvas;
 	public static boolean running = true;
 	public static int current_fps = 0;
 
 	public static Handler handler = new Handler();
+
+	public static KeyInput keyInput = new KeyInput();
+	public static MouseInput mouseInput = new MouseInput();
 
 	public Game() {
 		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
@@ -29,8 +31,12 @@ public class Game extends Canvas implements Runnable {
 			handler.addObject(new Wall(SCREEN_WIDTH-TILESIZE, y));
 		}
 
-		handler.addObject(new Tetromino_I(64, 64));
+		//handler.addObject(new Tetromino_I(64, 64));
+		handler.setCurrent_tetromino(new Tetromino_I(64, 64));
 
+		this.addKeyListener(keyInput);
+		this.addMouseListener(mouseInput);
+		this.addMouseMotionListener(mouseInput);
 		new Window(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE, this);
 	}
 
