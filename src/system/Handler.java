@@ -1,5 +1,6 @@
 package system;
 
+import objects.Tetromino_Cube;
 import objects.tetrominos.Tetromino_I;
 import objects.tetrominos.Tetromino_J;
 
@@ -30,6 +31,7 @@ public class Handler {
 			objects.get(i).tick();
 		}
 		if(current_tetromino != null) current_tetromino.tick();
+		checkFilledRow();
 	}
 
 	public void render(Graphics g) {
@@ -77,36 +79,81 @@ public class Handler {
 
 	public void moveTetrominoToBottom() {
 		int lowestObjectY = Game.SCREEN_HEIGHT;
+		int cubeY = 0;
 		for(GameObject cube : ((Tetromino)current_tetromino).getCubes()) {
 			for(GameObject object : objects) {
 				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
 					if(object.getX() == cube.getX() && object.getY() > cube.getY()) {
 						if(object.getY() < lowestObjectY) {
+							cubeY = ((Tetromino_Cube)cube).getOffsetY();
 							lowestObjectY = object.getY();
 						}
 					}
 				}
 			}
 		}
+		System.out.println("Lowest y found: " + lowestObjectY);
 		if(lowestObjectY > Game.TILESIZE) {
-			current_tetromino.setY(lowestObjectY - Game.TILESIZE);
+			current_tetromino.setY(lowestObjectY - Game.TILESIZE - ((Tetromino)current_tetromino).getYoffset());
 			plantTetromino();
 			timer = 0;
 		}
 	}
 
+	public void rotateTetromino(boolean cw) {
+		LinkedList<GameObject> rotated = ((Tetromino)current_tetromino).getRotatedInstance(cw);
+		boolean canRotate = true;
+		for(GameObject cube : rotated) {
+			for(GameObject object : objects) {
+				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
+					if(object.getX() == cube.getX() && object.getY() == cube.getY()) {
+						canRotate = false;
+					}
+				}
+			}
+		}
+		if(canRotate) {
+			Tetromino current = (Tetromino) current_tetromino;
+			current.setCubes(rotated);
+			int rotation = cw? current.getRotation() + 90 : current.getRotation() - 90;
+			if(rotation >= 360) rotation -= 360;
+			if(rotation < 0) rotation += 360;
+			current.setRotation(rotation);
+		}
+	}
+
 	private void plantTetromino() {
+		for(GameObject c : ((Tetromino)current_tetromino).getCubes()) {
+			Tetromino_Cube cube = (Tetromino_Cube) c;
+			cube.tick();
+			cube.clearParent();
+		}
 		objects.addAll(((Tetromino)current_tetromino).getCubes());
 		if(new Random().nextInt(2) == 0) {
 			current_tetromino = new Tetromino_I(64, 64);
 		} else {
 			current_tetromino = new Tetromino_J(64, 64);
 		}
-
-		checkFilledRow();
 	}
 
 	private void checkFilledRow() {
-		System.out.println("check if a row is filled");
+		for(int y=Game.TILESIZE; y<Game.SCREEN_HEIGHT-Game.TILESIZE; y+=Game.TILESIZE) {
+			LinkedList<GameObject> cubes_on_row = new LinkedList<>();
+			for(GameObject object : objects) {
+				if(object.getId() == ID.tetromino_cube) {
+					if(object.getY() == y) cubes_on_row.add(object);
+				}
+			}
+			if(cubes_on_row.size() >= 10) {
+				objects.removeAll(cubes_on_row);
+				for(GameObject object : objects) {
+					if(object.getId() == ID.tetromino_cube) {
+						if(object.getY() <= y) {
+							object.setY(object.getY() + Game.TILESIZE);
+						}
+					}
+				}
+			}
+		}
 	}
 }

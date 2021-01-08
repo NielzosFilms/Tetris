@@ -2,27 +2,34 @@ package system;
 
 import java.awt.*;
 
+/**
+ * @ColorPalette is Sweetie 16 palette from lospec
+ * @link https://lospec.com/palette-list/sweetie-16
+ */
+
 public enum ColorPalette {
-	white("#f4f9e6"),
+	white("#f4f4f4"),
+	black("#1a1c2c"),
 
-	black_dark_blue("#1b0f28"),
-	blue("#4c6684"),
-	light_blue("#83bfca"),
+	light_gray("#94b0c2"),
+	gray("#566c86"),
+	dark_gray("#333c57"),
 
-	dark_green("#233e38"),
-	green("#357b45"),
-	light_green("#8ab954"),
-	yellow("#f2e05a"),
+	dark_blue("#29366f"),
+	blue("#3b5dc9"),
 
-	dark_red("#312039"),
-	red("#6e2745"),
-	light_red("#c6434e"),
-	pink("#e7937e"),
+	dark_light_blue("#41a6f6"),
+	light_blue("#73eff7"),
 
-	brown("#544242"),
-	orange("#9e523b"),
-	light_orange("#e98549"),
-	gray("#8d8878");
+	dark_green("#257179"),
+	green("#38b764"),
+	light_green("#a7f070"),
+
+	purple("#5d275d"),
+	red("#b13e53"),
+
+	orange("#ef7d57"),
+	yellow("#ffcd75");
 
 
 	public final String hex;

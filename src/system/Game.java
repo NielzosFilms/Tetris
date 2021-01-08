@@ -22,6 +22,8 @@ public class Game extends Canvas implements Runnable {
 	public static KeyInput keyInput = new KeyInput();
 	public static MouseInput mouseInput = new MouseInput();
 
+	public static final BasicStroke stroke = new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
+
 	public Game() {
 		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
 			handler.addObject(new Wall(x, 0));
@@ -98,7 +100,8 @@ public class Game extends Canvas implements Runnable {
 		Graphics g = bs.getDrawGraphics();
 		Graphics2D g2d = (Graphics2D) g;
 
-		g.setColor(ColorPalette.black_dark_blue.color);
+		g2d.setStroke(stroke);
+		g.setColor(ColorPalette.black.color);
 		g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		handler.render(g);
@@ -110,6 +113,15 @@ public class Game extends Canvas implements Runnable {
 		g.dispose();
 		g2d.dispose();
 		bs.show();
+	}
+
+	public static void renderCube(Graphics g, int x, int y, Color bg, Color border) {
+		int line_width = (int) stroke.getLineWidth();
+
+		g.setColor(bg);
+		g.fillRect(x+ line_width/2, y+line_width/2, TILESIZE-line_width, TILESIZE-line_width);
+		g.setColor(border);
+		g.drawRect(x+line_width/2, y+line_width/2, TILESIZE-line_width, TILESIZE-line_width);
 	}
 
 	public static void main(String[] args) {

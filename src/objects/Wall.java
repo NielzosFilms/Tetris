@@ -1,6 +1,7 @@
 package objects;
 
 import system.ColorPalette;
+import system.Game;
 import system.GameObject;
 import system.ID;
 
@@ -18,10 +19,7 @@ public class Wall extends GameObject {
 
 	@Override
 	public void render(Graphics g) {
-		g.setColor(ColorPalette.brown.color);
-		g.fillRect(x, y, TILESIZE, TILESIZE);
-		g.setColor(ColorPalette.dark_red.color);
-		g.drawRect(x, y, TILESIZE, TILESIZE);
+		Game.renderCube(g, x, y, ColorPalette.gray.color, ColorPalette.light_gray.color);
 	}
 
 	@Override
