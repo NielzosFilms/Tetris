@@ -98,6 +98,7 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void tick() {
+		keyInput.tick();
 		handler.tick();
 	}
 
