@@ -10,6 +10,7 @@ import java.util.Random;
 public class Handler {
 	LinkedList<GameObject> objects = new LinkedList<>();
 	private GameObject current_tetromino;
+	private GameObject current_tetromino_ghost;
 	private int timer = 0;
 
 	public Handler() {}
@@ -34,10 +35,28 @@ public class Handler {
 	}
 
 	public void render(Graphics g) {
+		Graphics2D g2d = (Graphics2D) g;
 		for(int i=0; i<objects.size(); i++) {
 			objects.get(i).render(g);
 		}
-		if(current_tetromino != null) current_tetromino.render(g);
+		if(current_tetromino != null) {
+			current_tetromino.render(g);
+			for(GameObject cube : new LinkedList<>(((Tetromino)current_tetromino).getCubes())) {
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+				try {
+					Tetromino_Cube cloned = (Tetromino_Cube) ((Tetromino_Cube) cube).clone();
+					int y_offset = 1;
+					while(canMove(0, y_offset)) {
+						y_offset++;
+					}
+					y_offset -=1;
+					cloned.setY(cloned.getY() + (y_offset * cube.TILESIZE));
+					cloned.render(g);
+				} catch (CloneNotSupportedException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void addObject(GameObject object) {
@@ -92,7 +111,7 @@ public class Handler {
 		for(GameObject cube : rotated) {
 			for(GameObject object : objects) {
 				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
-					if(object.getX() == cube.getX() && object.getY() == cube.getY()) {
+					if(cube.getBounds().intersects(object.getBounds())) {
 						canRotate = false;
 					}
 				}
@@ -115,10 +134,11 @@ public class Handler {
 			cube.clearParent();
 		}
 		objects.addAll(((Tetromino)current_tetromino).getCubes());
-		current_tetromino = getNextTetromino(64, 64);
+		setCurrent_tetromino(getNextTetromino(64, 64));
 	}
 
 	private void checkFilledRow() {
+		int rows_cleared = 0;
 		for(int y=Game.TILESIZE; y<Game.SCREEN_HEIGHT-Game.TILESIZE; y+=Game.TILESIZE) {
 			LinkedList<GameObject> cubes_on_row = new LinkedList<>();
 			for(GameObject object : objects) {
@@ -127,6 +147,7 @@ public class Handler {
 				}
 			}
 			if(cubes_on_row.size() >= 10) {
+				rows_cleared++;
 				objects.removeAll(cubes_on_row);
 				for(GameObject object : objects) {
 					if(object.getId() == ID.tetromino_cube) {
@@ -137,6 +158,7 @@ public class Handler {
 				}
 			}
 		}
+		Game.current_score += calculateScore(rows_cleared, Game.current_level);
 	}
 
 	public GameObject getNextTetromino(int x, int y) {
@@ -165,5 +187,25 @@ public class Handler {
 				break;
 		}
 		return ret;
+	}
+
+	public int calculateScore(int lines_cleared, int level) {
+		int line_score = 0;
+		switch(lines_cleared) {
+			case 1:
+				line_score = 40;
+				break;
+			case 2:
+				line_score = 100;
+				break;
+			case 3:
+				line_score = 300;
+				break;
+			case 4:
+				line_score = 1200;
+				break;
+		}
+
+		return (level + 1) * line_score;
 	}
 }

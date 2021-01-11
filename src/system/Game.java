@@ -24,6 +24,9 @@ public class Game extends Canvas implements Runnable {
 
 	public static final BasicStroke stroke = new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
 
+	public static int current_level = 0;
+	public static int current_score = 0;
+
 	public Game() {
 		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
 			handler.addObject(new Wall(x, 0));
@@ -108,7 +111,13 @@ public class Game extends Canvas implements Runnable {
 
 		g.setFont(new Font("Arial", Font.PLAIN, 10));
 		g.setColor(ColorPalette.white.color);
-		g.drawString(String.valueOf(current_fps), 0, 10);
+		g.drawString("FPS: " + current_fps, 0, 10);
+
+		g.setFont(new Font("Arial", Font.PLAIN, 15));
+		g.drawString("Score:", 0, 25);
+		g.drawString(String.valueOf(current_score), 60, 25);
+		g.drawString("Level:", 0, 40);
+		g.drawString(String.valueOf(current_level), 60, 40);
 
 		g.dispose();
 		g2d.dispose();

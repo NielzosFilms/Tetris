@@ -7,7 +7,7 @@ import system.ID;
 
 import java.awt.*;
 
-public class Tetromino_Cube extends GameObject {
+public class Tetromino_Cube extends GameObject implements Cloneable {
 	private Color color, border_color;
 	private GameObject parent;
 	private int offset_x, offset_y;
@@ -18,6 +18,10 @@ public class Tetromino_Cube extends GameObject {
 		this.color = color;
 		this.border_color = border_color;
 		this.parent = parent;
+	}
+
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 	@Override
