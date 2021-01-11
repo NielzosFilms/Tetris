@@ -9,7 +9,8 @@ import java.awt.image.BufferStrategy;
 
 public class Game extends Canvas implements Runnable {
 	public static final int TILESIZE = 32;
-	public static final int SCREEN_WIDTH = TILESIZE*12, SCREEN_HEIGHT = TILESIZE*22;
+	public static final int PLAYSPACE_WIDTH = 12, PLAYSPACE_HEIGHT = 22;
+	public static final int SCREEN_WIDTH = TILESIZE*(PLAYSPACE_WIDTH+7), SCREEN_HEIGHT = TILESIZE*PLAYSPACE_HEIGHT;
 	public static final String TITLE = "Tetris | NielzosFilms";
 
 	public static Thread thread;
@@ -26,19 +27,25 @@ public class Game extends Canvas implements Runnable {
 
 	public static int current_level = 0;
 	public static int current_score = 0;
+	public static final int MAX_LEVEL = 16;
 
 	public Game() {
 		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
 			handler.addObject(new Wall(x, 0));
-			handler.addObject(new Wall(x, SCREEN_HEIGHT-TILESIZE));
+			handler.addObject(new Wall(x, (PLAYSPACE_HEIGHT*TILESIZE)-TILESIZE));
 		}
 		for(int y=TILESIZE; y<SCREEN_HEIGHT-TILESIZE; y+=TILESIZE) {
 			handler.addObject(new Wall(0, y));
+			handler.addObject(new Wall((PLAYSPACE_WIDTH*TILESIZE)-TILESIZE, y));
 			handler.addObject(new Wall(SCREEN_WIDTH-TILESIZE, y));
+		}
+		for(int x=0; x<6; x++) {
+			handler.addObject(new Wall((PLAYSPACE_WIDTH * TILESIZE + (x * TILESIZE)), TILESIZE * 6));
+			handler.addObject(new Wall((PLAYSPACE_WIDTH * TILESIZE + (x * TILESIZE)), TILESIZE * 12));
 		}
 
 		//handler.addObject(new Tetromino_I(64, 64));
-		handler.setCurrent_tetromino(handler.getNextTetromino(64, 64));
+		handler.setNextTetromino(64, 64);
 
 		this.addKeyListener(keyInput);
 		this.addMouseListener(mouseInput);
@@ -113,11 +120,14 @@ public class Game extends Canvas implements Runnable {
 		g.setColor(ColorPalette.white.color);
 		g.drawString("FPS: " + current_fps, 0, 10);
 
-		g.setFont(new Font("Arial", Font.PLAIN, 15));
+		g.setFont(new Font("Arial", Font.BOLD, 15));
 		g.drawString("Score:", 0, 25);
 		g.drawString(String.valueOf(current_score), 60, 25);
 		g.drawString("Level:", 0, 40);
 		g.drawString(String.valueOf(current_level), 60, 40);
+
+		g.drawString("Next:", 12*Game.TILESIZE+8, 2*Game.TILESIZE);
+		g.drawString("Holding:", 12*Game.TILESIZE+8, 8*Game.TILESIZE);
 
 		g.dispose();
 		g2d.dispose();

@@ -9,20 +9,31 @@ public class KeyInput extends KeyAdapter {
 	public KeyInput() {}
 
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyCode() == KeyEvent.VK_RIGHT) {
-			handler.moveTetromino(1, 0);
-		}
-		if(e.getKeyCode() == KeyEvent.VK_LEFT) {
-			handler.moveTetromino(-1, 0);
-		}
-		if(e.getKeyCode() == KeyEvent.VK_DOWN) {
-			handler.moveTetromino(0, 1);
-		}
-		if(e.getKeyCode() == KeyEvent.VK_UP) {
-			handler.rotateTetromino(true);
-		}
-		if(e.getKeyCode() == KeyEvent.VK_SPACE) {
-			handler.moveTetrominoToBottom();
+		switch(e.getKeyCode()) {
+			case KeyEvent.VK_RIGHT:
+				handler.moveTetromino(1, 0);
+				break;
+			case KeyEvent.VK_LEFT:
+				handler.moveTetromino(-1, 0);
+				break;
+			case KeyEvent.VK_DOWN:
+				handler.moveTetromino(0, 1);
+				break;
+			case KeyEvent.VK_UP:
+				handler.rotateTetromino(true);
+				break;
+			case KeyEvent.VK_Z:
+				handler.rotateTetromino(false);
+				break;
+			case KeyEvent.VK_SPACE:
+				handler.moveTetrominoToBottom();
+				break;
+			case KeyEvent.VK_C:
+				handler.holdTetromino();
+				break;
+			case KeyEvent.VK_R:
+				handler.restart();
+				break;
 		}
 	}
 

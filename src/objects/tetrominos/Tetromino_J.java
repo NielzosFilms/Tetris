@@ -60,13 +60,10 @@ public class Tetromino_J extends GameObject implements Tetromino {
 	}
 
 	@Override
-	public LinkedList<GameObject> getRotatedInstance(boolean cw) {
-		int tmp_rot = cw? rotation + 90 : rotation - 90;
-		if(tmp_rot >= 360) tmp_rot -= 360;
-		if(tmp_rot < 0) tmp_rot += 360;
+	public LinkedList<GameObject> getRotatedInstance(int angle) {
 
 		LinkedList<GameObject> ret = new LinkedList<GameObject>();
-		switch(tmp_rot) {
+		switch(angle) {
 			case 0:
 				ret.add(new Tetromino_Cube(-TILESIZE, -TILESIZE, COLOR, BORDER_COLOR, this));
 				ret.add(new Tetromino_Cube(-TILESIZE, 0, COLOR, BORDER_COLOR, this));
