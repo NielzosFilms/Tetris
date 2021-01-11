@@ -35,7 +35,7 @@ public class Game extends Canvas implements Runnable {
 		}
 
 		//handler.addObject(new Tetromino_I(64, 64));
-		handler.setCurrent_tetromino(new Tetromino_I(64, 64));
+		handler.setCurrent_tetromino(handler.getNextTetromino(64, 64));
 
 		this.addKeyListener(keyInput);
 		this.addMouseListener(mouseInput);

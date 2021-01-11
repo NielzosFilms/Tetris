@@ -9,20 +9,19 @@ import system.Tetromino;
 import java.awt.*;
 import java.util.LinkedList;
 
-public class Tetromino_I extends GameObject implements Tetromino {
-	private final Color COLOR = ColorPalette.light_blue.color;
-	private final Color BORDER_COLOR = ColorPalette.dark_light_blue.color;
+public class Tetromino_S extends GameObject implements Tetromino {
+	private final Color COLOR = ColorPalette.green.color;
+	private final Color BORDER_COLOR = ColorPalette.dark_green.color;
 	private LinkedList<GameObject> cubes = new LinkedList<GameObject>();
 
 	private int rotation = 0;
-
-	public Tetromino_I(int x, int y) {
+	public Tetromino_S(int x, int y) {
 		super(x, y, ID.tetromino);
 
-		cubes.add(new Tetromino_Cube(-TILESIZE, 0, COLOR, BORDER_COLOR, this));
 		cubes.add(new Tetromino_Cube(0, 0, COLOR, BORDER_COLOR, this));
-		cubes.add(new Tetromino_Cube(TILESIZE, 0, COLOR, BORDER_COLOR, this));
-		cubes.add(new Tetromino_Cube(TILESIZE*2, 0, COLOR, BORDER_COLOR, this));
+		cubes.add(new Tetromino_Cube(-TILESIZE, 0, COLOR, BORDER_COLOR, this));
+		cubes.add(new Tetromino_Cube(0, -TILESIZE, COLOR, BORDER_COLOR, this));
+		cubes.add(new Tetromino_Cube(TILESIZE, -TILESIZE, COLOR, BORDER_COLOR, this));
 	}
 
 	@Override
@@ -63,28 +62,28 @@ public class Tetromino_I extends GameObject implements Tetromino {
 		LinkedList<GameObject> ret = new LinkedList<GameObject>();
 		switch(tmp_rot) {
 			case 0:
-				ret.add(new Tetromino_Cube(-TILESIZE, 0, COLOR, BORDER_COLOR, this));
 				ret.add(new Tetromino_Cube(0, 0, COLOR, BORDER_COLOR, this));
-				ret.add(new Tetromino_Cube(TILESIZE, 0, COLOR, BORDER_COLOR, this));
-				ret.add(new Tetromino_Cube(TILESIZE*2, 0, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(-TILESIZE, 0, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(0, -TILESIZE, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(TILESIZE, -TILESIZE, COLOR, BORDER_COLOR, this));
 				break;
 			case 90:
-				ret.add(new Tetromino_Cube(TILESIZE, -TILESIZE, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(0, 0, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(0, -TILESIZE, COLOR, BORDER_COLOR, this));
 				ret.add(new Tetromino_Cube(TILESIZE, 0, COLOR, BORDER_COLOR, this));
 				ret.add(new Tetromino_Cube(TILESIZE, TILESIZE, COLOR, BORDER_COLOR, this));
-				ret.add(new Tetromino_Cube(TILESIZE, TILESIZE*2, COLOR, BORDER_COLOR, this));
 				break;
 			case 180:
-				ret.add(new Tetromino_Cube(-TILESIZE, TILESIZE, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(0, 0, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(TILESIZE, 0, COLOR, BORDER_COLOR, this));
 				ret.add(new Tetromino_Cube(0, TILESIZE, COLOR, BORDER_COLOR, this));
-				ret.add(new Tetromino_Cube(TILESIZE, TILESIZE, COLOR, BORDER_COLOR, this));
-				ret.add(new Tetromino_Cube(TILESIZE*2, TILESIZE, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(-TILESIZE, TILESIZE, COLOR, BORDER_COLOR, this));
 				break;
 			case 270:
-				ret.add(new Tetromino_Cube(0, -TILESIZE, COLOR, BORDER_COLOR, this));
 				ret.add(new Tetromino_Cube(0, 0, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(-TILESIZE, 0, COLOR, BORDER_COLOR, this));
+				ret.add(new Tetromino_Cube(-TILESIZE, -TILESIZE, COLOR, BORDER_COLOR, this));
 				ret.add(new Tetromino_Cube(0, TILESIZE, COLOR, BORDER_COLOR, this));
-				ret.add(new Tetromino_Cube(0, TILESIZE*2, COLOR, BORDER_COLOR, this));
 				break;
 		}
 		return ret;

@@ -31,8 +31,8 @@ public class Tetromino_Cube extends GameObject {
 	@Override
 	public void render(Graphics g) {
 		Game.renderCube(g, x, y, color, border_color);
-		g.setColor(ColorPalette.white.color);
-		g.drawString("" + y, x, y+10);
+		/*g.setColor(ColorPalette.white.color);
+		g.drawString("" + y, x, y+10);*/
 	}
 
 	@Override

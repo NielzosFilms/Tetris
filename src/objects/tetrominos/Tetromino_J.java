@@ -96,14 +96,6 @@ public class Tetromino_J extends GameObject implements Tetromino {
 	}
 
 	@Override
-	public int getYoffset() {
-		if(rotation == 180) {
-			return 0;
-		}
-		return rotation != 0 ? TILESIZE : 0;
-	}
-
-	@Override
 	public int getRotation() {
 		return rotation;
 	}

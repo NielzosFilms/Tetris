@@ -1,8 +1,7 @@
 package system;
 
 import objects.Tetromino_Cube;
-import objects.tetrominos.Tetromino_I;
-import objects.tetrominos.Tetromino_J;
+import objects.tetrominos.*;
 
 import java.awt.*;
 import java.util.LinkedList;
@@ -78,26 +77,13 @@ public class Handler {
 	}
 
 	public void moveTetrominoToBottom() {
-		int lowestObjectY = Game.SCREEN_HEIGHT;
-		int cubeY = 0;
-		for(GameObject cube : ((Tetromino)current_tetromino).getCubes()) {
-			for(GameObject object : objects) {
-				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
-					if(object.getX() == cube.getX() && object.getY() > cube.getY()) {
-						if(object.getY() < lowestObjectY) {
-							cubeY = ((Tetromino_Cube)cube).getOffsetY();
-							lowestObjectY = object.getY();
-						}
-					}
-				}
-			}
+		int y_offset = 1;
+		while(canMove(0, y_offset)) {
+			y_offset++;
 		}
-		System.out.println("Lowest y found: " + lowestObjectY);
-		if(lowestObjectY > Game.TILESIZE) {
-			current_tetromino.setY(lowestObjectY - Game.TILESIZE - ((Tetromino)current_tetromino).getYoffset());
-			plantTetromino();
-			timer = 0;
-		}
+		moveTetromino(0, y_offset-1);
+		plantTetromino();
+		timer = 0;
 	}
 
 	public void rotateTetromino(boolean cw) {
@@ -129,11 +115,7 @@ public class Handler {
 			cube.clearParent();
 		}
 		objects.addAll(((Tetromino)current_tetromino).getCubes());
-		if(new Random().nextInt(2) == 0) {
-			current_tetromino = new Tetromino_I(64, 64);
-		} else {
-			current_tetromino = new Tetromino_J(64, 64);
-		}
+		current_tetromino = getNextTetromino(64, 64);
 	}
 
 	private void checkFilledRow() {
@@ -155,5 +137,33 @@ public class Handler {
 				}
 			}
 		}
+	}
+
+	public GameObject getNextTetromino(int x, int y) {
+		GameObject ret = new Tetromino_I(x, y);
+		switch(new Random().nextInt(7)) {
+			case 0:
+				ret = new Tetromino_I(x, y);
+				break;
+			case 1:
+				ret =  new Tetromino_J(x, y);
+				break;
+			case 2:
+				ret =  new Tetromino_L(x, y);
+				break;
+			case 3:
+				ret =  new Tetromino_O(x, y);
+				break;
+			case 4:
+				ret =  new Tetromino_S(x, y);
+				break;
+			case 5:
+				ret =  new Tetromino_T(x, y);
+				break;
+			case 6:
+				ret =  new Tetromino_Z(x, y);
+				break;
+		}
+		return ret;
 	}
 }
