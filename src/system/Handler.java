@@ -51,7 +51,11 @@ public class Handler {
 			if (total_lines_cleared / LINES_NEEDED_FOR_NEXT_LEVEL >= Game.current_level) {
 				Game.current_level++;
 				LINES_NEEDED_FOR_NEXT_LEVEL = 3 + Game.current_level;
-				if (Game.current_level > Game.MAX_LEVEL) Game.current_level = Game.MAX_LEVEL;
+				if (Game.current_level > Game.MAX_LEVEL) {
+					Game.current_level = Game.MAX_LEVEL;
+				} else {
+					AudioPlayer.playSound(AudioFiles.next_level, Game.VOLUME, false, 0);
+				}
 			}
 			for(int i=0; i<objects.size(); i++) {
 				if(objects.get(i).getId() == ID.tetromino_cube) {
@@ -173,6 +177,7 @@ public class Handler {
 		}
 		moveTetromino(0, y_offset-1);
 		plantTetromino();
+		Game.current_score += y_offset*2;
 		timer = 0;
 	}
 
@@ -208,7 +213,7 @@ public class Handler {
 			current.setRotation(rotation);
 		} else {
 			if(can_help_on_rotate) {
-				if(canMoveCubes(cube_offset_x, cube_offset_y, rotated) && canMoveCubes(cube_offset_x, cube_offset_y+1, rotated)) {
+				if(canMoveCubes(cube_offset_x, cube_offset_y, rotated) ){//&& canMoveCubes(cube_offset_x, cube_offset_y+1, rotated)) {
 					current.setCubes(current.getRotatedInstance(rotation));
 					current.setRotation(rotation);
 					moveTetromino(cube_offset_x, cube_offset_y);
@@ -256,6 +261,7 @@ public class Handler {
 		}
 		if(rows_cleared == 4) {
 			AudioPlayer.playSound(AudioFiles.explosion_2, Game.VOLUME, false, 0);
+			AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 			for(GameObject cube : cleared_cubes) {
 				addObject(new Effect_Clear_Cube(cube.getX(), cube.getY(), 30f));
 			}
@@ -331,6 +337,7 @@ public class Handler {
 		Game.current_level = 1;
 		Game.current_score = 0;
 		total_lines_cleared = 0;
+		can_hold = true;
 	}
 
 	private int getHistoryCount(GameObject new_tetromino) {

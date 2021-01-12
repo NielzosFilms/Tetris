@@ -84,6 +84,7 @@ public class KeyInput extends KeyAdapter {
 					break;
 				case KeyEvent.VK_DOWN:
 					handler.moveTetromino(0, 1);
+					Game.current_score += 1;
 					break;
 				case KeyEvent.VK_UP:
 					handler.can_help_on_rotate = true;

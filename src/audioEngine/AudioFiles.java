@@ -10,7 +10,9 @@ public class AudioFiles {
 			move_tetromino = new AudioClip("sounds/move_tetromino.wav"),
 			hold = new AudioClip("sounds/hold.wav"),
 			defeat = new AudioClip("sounds/defeat.wav"),
-			place = new AudioClip("sounds/place.wav")
+			place = new AudioClip("sounds/place.wav"),
+			tetris = new AudioClip("sounds/tetris.wav"),
+			next_level = new AudioClip("sounds/next_level_2.wav");
 	;
 	
 	public AudioFiles() {}
