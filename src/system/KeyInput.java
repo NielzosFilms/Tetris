@@ -1,5 +1,9 @@
 package system;
 
+import audioEngine.AudioClip;
+import audioEngine.AudioFiles;
+import audioEngine.AudioPlayer;
+
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
@@ -68,6 +72,8 @@ public class KeyInput extends KeyAdapter {
 	}
 
 	private void doKeyFunction(int keyCode) {
+		AudioClip move_sound = AudioFiles.move_tetromino;
+
 		if(Game.gameState == GameState.game) {
 			switch(keyCode) {
 				case KeyEvent.VK_RIGHT:
@@ -88,6 +94,7 @@ public class KeyInput extends KeyAdapter {
 					handler.rotateTetromino(false);
 					break;
 				case KeyEvent.VK_SPACE:
+					AudioPlayer.playSound(AudioFiles.hard_drop, Game.VOLUME, false, 0);
 					handler.moveTetrominoToBottom();
 					break;
 				case KeyEvent.VK_C:
@@ -108,6 +115,7 @@ public class KeyInput extends KeyAdapter {
 		} else if(Game.gameState == GameState.end_screen) {
 			switch(keyCode) {
 				case KeyEvent.VK_SPACE:
+					AudioPlayer.playSound(AudioFiles.blip, Game.VOLUME, false, 0);
 					Game.addHighScore(Game.current_score);
 					Game.saveHighScores();
 					Game.gameState = GameState.start_screen;

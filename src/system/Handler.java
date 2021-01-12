@@ -1,5 +1,7 @@
 package system;
 
+import audioEngine.AudioFiles;
+import audioEngine.AudioPlayer;
 import objects.Tetromino_Cube;
 import objects.tetrominos.*;
 
@@ -53,6 +55,7 @@ public class Handler {
 				if(objects.get(i).getId() == ID.tetromino_cube) {
 					if(objects.get(i).getY() < Game.TILESIZE * 2) {
 						Game.gameState = GameState.end_screen;
+						AudioPlayer.playSound(AudioFiles.defeat, Game.VOLUME, false, 0);
 					}
 				}
 			}
@@ -152,6 +155,7 @@ public class Handler {
 
 	public void moveTetromino(int x_offset, int y_offset) {
 		if(canMove(x_offset, y_offset)) {
+			AudioPlayer.playSound(AudioFiles.move_tetromino, Game.VOLUME, false, 0);
 			current_tetromino.setY(current_tetromino.getY() + y_offset*Game.TILESIZE);
 			current_tetromino.setX(current_tetromino.getX() + x_offset*Game.TILESIZE);
 		}
@@ -194,6 +198,7 @@ public class Handler {
 			}
 		}
 		if(canRotate) {
+			AudioPlayer.playSound(AudioFiles.move_tetromino, Game.VOLUME, false, 0);
 			current.setCubes(current.getRotatedInstance(rotation));
 			current.setRotation(rotation);
 		} else {
@@ -241,6 +246,11 @@ public class Handler {
 				}
 			}
 		}
+		if(rows_cleared == 4) {
+			AudioPlayer.playSound(AudioFiles.explosion_2, Game.VOLUME, false, 0);
+		} else if(rows_cleared > 0) {
+			AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
+		}
 		total_lines_cleared += rows_cleared;
 		Game.current_score += calculateScore(rows_cleared, Game.current_level);
 	}
@@ -260,6 +270,7 @@ public class Handler {
 
 	public void holdTetromino() {
 		if(can_hold) {
+			AudioPlayer.playSound(AudioFiles.hold, Game.VOLUME, false, 0);
 			can_hold = false;
 
 			GameObject currentTetromino = current_tetromino;
@@ -267,7 +278,7 @@ public class Handler {
 			if(holding_tetromino == null) {
 				setNextTetromino();
 			} else {
-				holding_tetromino.setX(64);
+				holding_tetromino.setX(160);
 				holding_tetromino.setY(64);
 				current_tetromino = holding_tetromino;
 			}
@@ -280,6 +291,7 @@ public class Handler {
 	}
 
 	public void reset() {
+		AudioPlayer.playSound(AudioFiles.blip, Game.VOLUME, false, 0);
 		LinkedList<GameObject> cubes = new LinkedList<>();
 		for(int i=0; i< objects.size(); i++) {
 			if(objects.get(i).getId() == ID.tetromino_cube) {
