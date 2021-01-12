@@ -6,6 +6,7 @@ import objects.tetrominos.Tetromino_J;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.util.Random;
 
 public class Game extends Canvas implements Runnable {
 	public static final int TILESIZE = 32;
@@ -29,7 +30,7 @@ public class Game extends Canvas implements Runnable {
 	public static int current_score = 0;
 	public static final int MAX_LEVEL = 16;
 
-	public static GameState gameState = GameState.game;
+	public static GameState gameState = GameState.start_screen;
 
 	public Game() {
 		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
@@ -47,7 +48,7 @@ public class Game extends Canvas implements Runnable {
 		}
 
 		//handler.addObject(new Tetromino_I(64, 64));
-		handler.setNextTetromino(160, 64);
+		//handler.setNextTetromino(160, 64);
 
 		this.addKeyListener(keyInput);
 		this.addMouseListener(mouseInput);
@@ -121,7 +122,31 @@ public class Game extends Canvas implements Runnable {
 
 		g.setColor(ColorPalette.white.color);
 
-		if(gameState == GameState.game) {
+		if(gameState == GameState.start_screen) {
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+			g.setColor(ColorPalette.black.color);
+			g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+			g.setFont(new Font("Arial", Font.BOLD, 30));
+			g.setColor(ColorPalette.light_blue.color);
+			g.drawString("Tetris", 128, 64);
+
+			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.drawString("Press [Space] to start...", 64, 10*TILESIZE);
+
+			g.drawString("Highscores :", 12*TILESIZE+8, 64);
+
+			g.setFont(new Font("Arial", Font.BOLD, 15));
+			for(int i=0; i<5; i++) {
+				if(i == 0) {
+					g.setColor(ColorPalette.yellow.color);
+				} else g.setColor(ColorPalette.white.color);
+				g.drawString(i+1 + " : " + 999, 12*TILESIZE+8, 96 + i*20);
+			}
+
+		} else if(gameState == GameState.game) {
+			g.setColor(ColorPalette.light_blue.color);
 			g.setFont(new Font("Arial", Font.BOLD, 15));
 			g.drawString("Score :", 12*TILESIZE+8, 14*TILESIZE-8);
 			g.drawString(String.valueOf(current_score), 14*TILESIZE+8, 14*TILESIZE-8);
@@ -136,7 +161,7 @@ public class Game extends Canvas implements Runnable {
 			g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-			g.setColor(ColorPalette.white.color);
+			g.setColor(ColorPalette.light_blue.color);
 			g.setFont(new Font("Arial", Font.BOLD, 30));
 			g.drawString("Game Over!", 64, 64);
 			g.setFont(new Font("Arial", Font.BOLD, 20));
@@ -146,6 +171,9 @@ public class Game extends Canvas implements Runnable {
 			g.drawString(":", 144, 160);
 			g.drawString(String.valueOf(current_score), 176, 128);
 			g.drawString(String.valueOf(current_level), 176, 160);
+
+			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.drawString("Press [Space] to continue...", 64, 10*TILESIZE);
 		}
 
 		g.setFont(new Font("Arial", Font.PLAIN, 10));

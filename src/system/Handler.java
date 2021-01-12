@@ -49,14 +49,10 @@ public class Handler {
 				LINES_NEEDED_FOR_NEXT_LEVEL = 3 + Game.current_level;
 				if (Game.current_level > Game.MAX_LEVEL) Game.current_level = Game.MAX_LEVEL;
 			}
-			for (int c = 0; c < ((Tetromino) current_tetromino).getCubes().size(); c++) {
-				GameObject cube = ((Tetromino) current_tetromino).getCubes().get(c);
-				for (int i = 0; i < objects.size(); i++) {
-					GameObject object = objects.get(i);
-					if (object.getId() == ID.tetromino_cube) {
-						if (cube.getBounds().intersects(object.getBounds()) && cube.getY() < Game.TILESIZE*2) {
-							Game.gameState = GameState.end_screen;
-						}
+			for(int i=0; i<objects.size(); i++) {
+				if(objects.get(i).getId() == ID.tetromino_cube) {
+					if(objects.get(i).getY() < Game.TILESIZE * 2) {
+						Game.gameState = GameState.end_screen;
 					}
 				}
 			}
@@ -220,7 +216,7 @@ public class Handler {
 			cube.clearParent();
 		}
 		objects.addAll(((Tetromino)current_tetromino).getCubes());
-		setNextTetromino(160, 64);
+		setNextTetromino();
 	}
 
 	private void checkFilledRow() {
@@ -249,7 +245,9 @@ public class Handler {
 		Game.current_score += calculateScore(rows_cleared, Game.current_level);
 	}
 
-	public void setNextTetromino(int x, int y) {
+	public void setNextTetromino() {
+		int x = 160;
+		int y = 64;
 		if(next_tetromino != null) {
 			current_tetromino = next_tetromino;
 			current_tetromino.setX(x);
@@ -267,7 +265,7 @@ public class Handler {
 			GameObject currentTetromino = current_tetromino;
 
 			if(holding_tetromino == null) {
-				setNextTetromino(64, 64);
+				setNextTetromino();
 			} else {
 				holding_tetromino.setX(64);
 				holding_tetromino.setY(64);
@@ -281,7 +279,7 @@ public class Handler {
 		}
 	}
 
-	public void restart() {
+	public void reset() {
 		LinkedList<GameObject> cubes = new LinkedList<>();
 		for(int i=0; i< objects.size(); i++) {
 			if(objects.get(i).getId() == ID.tetromino_cube) {
@@ -291,10 +289,11 @@ public class Handler {
 		objects.removeAll(cubes);
 		next_tetromino = null;
 		holding_tetromino = null;
-		setNextTetromino(64, 64);
+		setNextTetromino();
 
-		Game.current_level = 0;
+		Game.current_level = 1;
 		Game.current_score = 0;
+		total_lines_cleared = 0;
 	}
 
 	private GameObject getNewTetromino(int x, int y) {

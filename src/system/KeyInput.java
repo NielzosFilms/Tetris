@@ -66,33 +66,49 @@ public class KeyInput extends KeyAdapter {
 	}
 
 	private void doKeyFunction(int keyCode) {
-		switch(keyCode) {
-			case KeyEvent.VK_RIGHT:
-				handler.moveTetromino(1, 0);
-				break;
-			case KeyEvent.VK_LEFT:
-				handler.moveTetromino(-1, 0);
-				break;
-			case KeyEvent.VK_DOWN:
-				handler.moveTetromino(0, 1);
-				break;
-			case KeyEvent.VK_UP:
-				handler.can_help_on_rotate = true;
-				handler.rotateTetromino(true);
-				break;
-			case KeyEvent.VK_Z:
-				handler.can_help_on_rotate = true;
-				handler.rotateTetromino(false);
-				break;
-			case KeyEvent.VK_SPACE:
-				handler.moveTetrominoToBottom();
-				break;
-			case KeyEvent.VK_C:
-				handler.holdTetromino();
-				break;
-			case KeyEvent.VK_R:
-				handler.restart();
-				break;
+		if(Game.gameState == GameState.game) {
+			switch(keyCode) {
+				case KeyEvent.VK_RIGHT:
+					handler.moveTetromino(1, 0);
+					break;
+				case KeyEvent.VK_LEFT:
+					handler.moveTetromino(-1, 0);
+					break;
+				case KeyEvent.VK_DOWN:
+					handler.moveTetromino(0, 1);
+					break;
+				case KeyEvent.VK_UP:
+					handler.can_help_on_rotate = true;
+					handler.rotateTetromino(true);
+					break;
+				case KeyEvent.VK_Z:
+					handler.can_help_on_rotate = true;
+					handler.rotateTetromino(false);
+					break;
+				case KeyEvent.VK_SPACE:
+					handler.moveTetrominoToBottom();
+					break;
+				case KeyEvent.VK_C:
+					handler.holdTetromino();
+					break;
+				case KeyEvent.VK_R:
+					handler.reset();
+					break;
+			}
+		} else if(Game.gameState == GameState.start_screen) {
+			switch(keyCode) {
+				case KeyEvent.VK_SPACE:
+					Game.gameState = GameState.game;
+					handler.reset();
+					handler.setNextTetromino();
+					break;
+			}
+		} else if(Game.gameState == GameState.end_screen) {
+			switch(keyCode) {
+				case KeyEvent.VK_SPACE:
+					Game.gameState = GameState.start_screen;
+					break;
+			}
 		}
 	}
 }
