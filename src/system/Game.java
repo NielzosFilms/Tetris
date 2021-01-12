@@ -134,8 +134,8 @@ public class Game extends Canvas implements Runnable {
 
 			g.setFont(new Font("Arial", Font.BOLD, 20));
 			g.drawString("Press [Space] to start...", 64, 10*TILESIZE);
-
 			g.drawString("Highscores :", 12*TILESIZE+8, 64);
+			g.drawString("Bindings :", 12*TILESIZE+8, 14*TILESIZE);
 
 			g.setFont(new Font("Arial", Font.BOLD, 15));
 			for(int i=0; i<5; i++) {
@@ -145,6 +145,28 @@ public class Game extends Canvas implements Runnable {
 				g.drawString(i+1 + " : " + 999, 12*TILESIZE+8, 96 + i*20);
 			}
 
+			g.setFont(new Font("Arial", Font.BOLD, 12));
+			g.setColor(ColorPalette.white.color);
+			g.drawString("[Left]", 12*TILESIZE+8, 15*TILESIZE);
+			g.drawString("Move Tetromino", 14*TILESIZE, 15*TILESIZE);
+
+			g.drawString("[Right]", 12*TILESIZE+8, 15*TILESIZE+16);
+			g.drawString("Move Tetromino", 14*TILESIZE, 15*TILESIZE+16);
+
+			g.drawString("[Down]", 12*TILESIZE+8, 16*TILESIZE);
+			g.drawString("Soft drop", 14*TILESIZE, 16*TILESIZE);
+
+			g.drawString("[Space]", 12*TILESIZE+8, 16*TILESIZE+16);
+			g.drawString("Hard drop", 14*TILESIZE, 16*TILESIZE+16);
+
+			g.drawString("[Up]", 12*TILESIZE+8, 17*TILESIZE);
+			g.drawString("Rotate CW", 14*TILESIZE, 17*TILESIZE);
+
+			g.drawString("[Z]", 12*TILESIZE+8, 17*TILESIZE+16);
+			g.drawString("Rotate CCW", 14*TILESIZE, 17*TILESIZE+16);
+
+			g.drawString("[C]", 12*TILESIZE+8, 18*TILESIZE);
+			g.drawString("Hold Tetromino", 14*TILESIZE, 18*TILESIZE);
 		} else if(gameState == GameState.game) {
 			g.setColor(ColorPalette.light_blue.color);
 			g.setFont(new Font("Arial", Font.BOLD, 15));
@@ -179,6 +201,10 @@ public class Game extends Canvas implements Runnable {
 		g.setFont(new Font("Arial", Font.PLAIN, 10));
 		g.setColor(ColorPalette.white.color);
 		g.drawString("FPS: " + current_fps, 0, 16);
+
+		g.setFont(new Font("Arial", Font.BOLD, 10));
+		g.setColor(ColorPalette.light_blue.color);
+		g.drawString("Created By : NielzosFilms", 8, 22*TILESIZE-12);
 
 		g.dispose();
 		g2d.dispose();

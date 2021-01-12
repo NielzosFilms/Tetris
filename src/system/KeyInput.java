@@ -33,14 +33,16 @@ public class KeyInput extends KeyAdapter {
 					Boolean[] old = keysDown.get(key);
 					old[1] = true;
 				}
-				if(hold_timer >= hold_threshold) {
-					if(move_speed_timer >= move_speed) {
-						doKeyFunction(key);
-						move_speed_timer = 0;
+				if(Game.gameState == GameState.game) {
+					if (hold_timer >= hold_threshold) {
+						if (move_speed_timer >= move_speed) {
+							doKeyFunction(key);
+							move_speed_timer = 0;
+						}
+						move_speed_timer++;
+					} else {
+						hold_timer++;
 					}
-					move_speed_timer++;
-				} else {
-					hold_timer++;
 				}
 			}
 		}
