@@ -1,5 +1,5 @@
 package system;
 
 public enum ID {
-	wall, tetromino_cube, tetromino,
+	wall, tetromino_cube, tetromino, effect,
 }

@@ -140,20 +140,10 @@ public class Game extends Canvas implements Runnable {
 
 			g.setFont(new Font("Arial", Font.BOLD, 20));
 			g.drawString("Press [Space] to start...", 64, 10*TILESIZE);
-			g.drawString("Highscores :", 12*TILESIZE+8, 64);
+
 			g.drawString("Bindings :", 12*TILESIZE+8, 14*TILESIZE);
 
-			g.setFont(new Font("Arial", Font.BOLD, 15));
-			for(int i=0; i<5; i++) {
-				if(i == 0) {
-					g.setColor(ColorPalette.yellow.color);
-				} else g.setColor(ColorPalette.white.color);
-				if(i < highscores.size()) {
-					g.drawString(i+1 + " : " + highscores.get(i), 12*TILESIZE+8, 96 + i*20);
-				} else {
-					g.drawString(i+1 + " : ---", 12*TILESIZE+8, 96 + i*20);
-				}
-			}
+			drawHighscores(g);
 
 			g.setFont(new Font("Arial", Font.BOLD, 12));
 			g.setColor(ColorPalette.white.color);
@@ -204,6 +194,17 @@ public class Game extends Canvas implements Runnable {
 			g.drawString(String.valueOf(current_score), 176, 128);
 			g.drawString(String.valueOf(current_level), 176, 160);
 
+			drawHighscores(g);
+
+			if(highscores.size() > 0) {
+				if(current_score == highscores.get(0)) {
+					g.setFont(new Font("Arial", Font.BOLD, 20));
+					g.setColor(ColorPalette.yellow.color);
+					g.drawString("NEW HIGHSCORE!", 64, 8*TILESIZE);
+				}
+			}
+
+			g.setColor(ColorPalette.white.color);
 			g.setFont(new Font("Arial", Font.BOLD, 20));
 			g.drawString("Press [Space] to continue...", 64, 10*TILESIZE);
 		}
@@ -219,6 +220,22 @@ public class Game extends Canvas implements Runnable {
 		g.dispose();
 		g2d.dispose();
 		bs.show();
+	}
+
+	private void drawHighscores(Graphics g) {
+		g.setFont(new Font("Arial", Font.BOLD, 20));
+		g.drawString("Highscores :", 12*TILESIZE+8, 64);
+		g.setFont(new Font("Arial", Font.BOLD, 15));
+		for(int i=0; i<5; i++) {
+			if(i == 0) {
+				g.setColor(ColorPalette.yellow.color);
+			} else g.setColor(ColorPalette.white.color);
+			if(i < highscores.size()) {
+				g.drawString(i+1 + " : " + highscores.get(i) + (highscores.get(i) == current_score ? "<-- YOU" : ""), 12*TILESIZE+8, 96 + i*20);
+			} else {
+				g.drawString(i+1 + " : ---", 12*TILESIZE+8, 96 + i*20);
+			}
+		}
 	}
 
 	public static void renderCube(Graphics g, int x, int y, Color bg, Color border) {

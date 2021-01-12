@@ -116,7 +116,6 @@ public class KeyInput extends KeyAdapter {
 			switch(keyCode) {
 				case KeyEvent.VK_SPACE:
 					AudioPlayer.playSound(AudioFiles.blip, Game.VOLUME, false, 0);
-					Game.addHighScore(Game.current_score);
 					Game.saveHighScores();
 					Game.gameState = GameState.start_screen;
 					break;
