@@ -17,35 +17,53 @@ public class Handler {
 	private int timer = 0;
 
 	private int total_lines_cleared = 0;
-	private final int LINES_NEEDED_FOR_NEXT_LEVEL = 24;
+	private int LINES_NEEDED_FOR_NEXT_LEVEL = 3 + Game.current_level;
 
 	public boolean can_help_on_rotate = true;
 
 	public Handler() {}
 
 	public void tick() {
-		if(current_tetromino != null) {
-			if (timer >= (MAX_TIMER-(Game.current_level*4))) {
-				timer = 0;
-				if (canMove(0,1)) {
-					current_tetromino.setY(current_tetromino.getY() + Game.TILESIZE);
-				} else {
-					plantTetromino();
-				}
-			}
-			timer++;
-		}
-		for(int i=0; i<objects.size(); i++) {
+		for (int i = 0; i < objects.size(); i++) {
 			objects.get(i).tick();
 		}
-		if(current_tetromino != null) current_tetromino.tick();
-		if(next_tetromino != null) next_tetromino.tick();
-		if(holding_tetromino != null) holding_tetromino.tick();
-		checkFilledRow();
+		if(Game.gameState == GameState.game) {
+			if (current_tetromino != null) {
+				if (timer >= (MAX_TIMER - (Game.current_level * 4))) {
+					timer = 0;
+					if (canMove(0, 1)) {
+						current_tetromino.setY(current_tetromino.getY() + Game.TILESIZE);
+					} else {
+						plantTetromino();
+					}
+				}
+				timer++;
+			}
+			if (current_tetromino != null) current_tetromino.tick();
+			if (next_tetromino != null) next_tetromino.tick();
+			if (holding_tetromino != null) holding_tetromino.tick();
+			checkFilledRow();
 
-		if(total_lines_cleared / LINES_NEEDED_FOR_NEXT_LEVEL > Game.current_level) {
-			Game.current_level++;
-			if(Game.current_level > Game.MAX_LEVEL) Game.current_level = Game.MAX_LEVEL;
+			if (total_lines_cleared / LINES_NEEDED_FOR_NEXT_LEVEL >= Game.current_level) {
+				Game.current_level++;
+				LINES_NEEDED_FOR_NEXT_LEVEL = 3 + Game.current_level;
+				if (Game.current_level > Game.MAX_LEVEL) Game.current_level = Game.MAX_LEVEL;
+			}
+			for (int c = 0; c < ((Tetromino) current_tetromino).getCubes().size(); c++) {
+				GameObject cube = ((Tetromino) current_tetromino).getCubes().get(c);
+				for (int i = 0; i < objects.size(); i++) {
+					GameObject object = objects.get(i);
+					if (object.getId() == ID.tetromino_cube) {
+						if (cube.getBounds().intersects(object.getBounds()) && cube.getY() < Game.TILESIZE*2) {
+							Game.gameState = GameState.end_screen;
+						}
+					}
+				}
+			}
+		} else if(Game.gameState == GameState.end_screen) {
+			current_tetromino = null;
+			next_tetromino = null;
+			holding_tetromino = null;
 		}
 	}
 
@@ -96,6 +114,7 @@ public class Handler {
 	}
 
 	private boolean canMove(int x_offset, int y_offset) {
+		if(current_tetromino == null) return false;
 		for(GameObject cube : ((Tetromino)current_tetromino).getCubes()) {
 			for(int i=0; i< objects.size(); i++) {
 				GameObject object = objects.get(i);
@@ -193,6 +212,7 @@ public class Handler {
 	}
 
 	private void plantTetromino() {
+		if(current_tetromino == null) return;
 		can_hold = true;
 		for(GameObject c : ((Tetromino)current_tetromino).getCubes()) {
 			Tetromino_Cube cube = (Tetromino_Cube) c;

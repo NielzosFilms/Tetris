@@ -25,9 +25,11 @@ public class Game extends Canvas implements Runnable {
 
 	public static final BasicStroke stroke = new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
 
-	public static int current_level = 0;
+	public static int current_level = 1;
 	public static int current_score = 0;
 	public static final int MAX_LEVEL = 16;
+
+	public static GameState gameState = GameState.game;
 
 	public Game() {
 		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
@@ -117,18 +119,38 @@ public class Game extends Canvas implements Runnable {
 
 		handler.render(g);
 
+		g.setColor(ColorPalette.white.color);
+
+		if(gameState == GameState.game) {
+			g.setFont(new Font("Arial", Font.BOLD, 15));
+			g.drawString("Score :", 12*TILESIZE+8, 14*TILESIZE-8);
+			g.drawString(String.valueOf(current_score), 14*TILESIZE+8, 14*TILESIZE-8);
+			g.drawString("Level  :", 12*TILESIZE+8, 15*TILESIZE-8);
+			g.drawString(String.valueOf(current_level), 14*TILESIZE+8, 15*TILESIZE-8);
+
+			g.drawString("Next :", 12*TILESIZE+8, 2*TILESIZE-8);
+			g.drawString("Holding :", 12*TILESIZE+8, 8*TILESIZE-8);
+		} else if(gameState == GameState.end_screen) {
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+			g.setColor(ColorPalette.black.color);
+			g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+			g.setColor(ColorPalette.white.color);
+			g.setFont(new Font("Arial", Font.BOLD, 30));
+			g.drawString("Game Over!", 64, 64);
+			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.drawString("Score", 64, 128);
+			g.drawString("Level", 64, 160);
+			g.drawString(":", 144, 128);
+			g.drawString(":", 144, 160);
+			g.drawString(String.valueOf(current_score), 176, 128);
+			g.drawString(String.valueOf(current_level), 176, 160);
+		}
+
 		g.setFont(new Font("Arial", Font.PLAIN, 10));
 		g.setColor(ColorPalette.white.color);
-		g.drawString("FPS: " + current_fps, 0, 10);
-
-		g.setFont(new Font("Arial", Font.BOLD, 15));
-		g.drawString("Score:", 0, 25);
-		g.drawString(String.valueOf(current_score), 60, 25);
-		g.drawString("Level:", 0, 40);
-		g.drawString(String.valueOf(current_level), 60, 40);
-
-		g.drawString("Next:", 12*Game.TILESIZE+8, 2*Game.TILESIZE);
-		g.drawString("Holding:", 12*Game.TILESIZE+8, 8*Game.TILESIZE);
+		g.drawString("FPS: " + current_fps, 0, 16);
 
 		g.dispose();
 		g2d.dispose();
