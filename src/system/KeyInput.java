@@ -108,6 +108,8 @@ public class KeyInput extends KeyAdapter {
 		} else if(Game.gameState == GameState.end_screen) {
 			switch(keyCode) {
 				case KeyEvent.VK_SPACE:
+					Game.addHighScore(Game.current_score);
+					Game.saveHighScores();
 					Game.gameState = GameState.start_screen;
 					break;
 			}

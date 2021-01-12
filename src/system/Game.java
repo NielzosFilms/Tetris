@@ -6,6 +6,8 @@ import objects.tetrominos.Tetromino_J;
 
 import java.awt.*;
 import java.awt.image.BufferStrategy;
+import java.io.*;
+import java.util.LinkedList;
 import java.util.Random;
 
 public class Game extends Canvas implements Runnable {
@@ -31,6 +33,8 @@ public class Game extends Canvas implements Runnable {
 	public static final int MAX_LEVEL = 16;
 
 	public static GameState gameState = GameState.start_screen;
+
+	public static LinkedList<Integer> highscores = new LinkedList<>();
 
 	public Game() {
 		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
@@ -142,7 +146,11 @@ public class Game extends Canvas implements Runnable {
 				if(i == 0) {
 					g.setColor(ColorPalette.yellow.color);
 				} else g.setColor(ColorPalette.white.color);
-				g.drawString(i+1 + " : " + 999, 12*TILESIZE+8, 96 + i*20);
+				if(i < highscores.size()) {
+					g.drawString(i+1 + " : " + highscores.get(i), 12*TILESIZE+8, 96 + i*20);
+				} else {
+					g.drawString(i+1 + " : ---", 12*TILESIZE+8, 96 + i*20);
+				}
 			}
 
 			g.setFont(new Font("Arial", Font.BOLD, 12));
@@ -220,7 +228,63 @@ public class Game extends Canvas implements Runnable {
 		g.drawRect(x+line_width/2, y+line_width/2, TILESIZE-line_width, TILESIZE-line_width);
 	}
 
+	public static void addHighScore(int current_score) {
+		if(current_score == 0) return;
+		int index = 0;
+		boolean place_score = false;
+		for(int i=highscores.size()-1; i>=0; i--) {
+			if(current_score > highscores.get(i)) {
+				index = i;
+				place_score = true;
+			}
+		}
+		if(place_score) {
+			highscores.add(index, current_score);
+			while(highscores.size() > 5) {
+				highscores.remove(5);
+			}
+		} else {
+			highscores.add(current_score);
+		}
+	}
+
+	public static void saveHighScores() {
+		try {
+			File file = new File("highscores.txt");
+			file.createNewFile();
+			FileWriter writer = new FileWriter(file, false);
+			PrintWriter pwOb = new PrintWriter(writer, false);
+			pwOb.flush();
+			for(int score : highscores) {
+				pwOb.println(score);
+			}
+			pwOb.close();
+			writer.close();
+
+		} catch (IOException e) {
+			System.out.println("An error occurred.");
+			e.printStackTrace();
+		}
+	}
+
+	public static void loadHighScores() {
+		try {
+			File file = new File("highscores.txt");
+			//FileWriter writer = new FileWriter(highscores);
+			if(file.exists()) {
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				for(String line; (line = br.readLine()) != null; ) {
+					highscores.add(Integer.parseInt(line));
+				}
+				System.out.println(highscores);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static void main(String[] args) {
+		loadHighScores();
 		canvas = new Game();
 	}
 
