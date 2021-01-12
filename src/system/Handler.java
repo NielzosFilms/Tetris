@@ -19,6 +19,8 @@ public class Handler {
 	private int total_lines_cleared = 0;
 	private final int LINES_NEEDED_FOR_NEXT_LEVEL = 24;
 
+	public boolean can_help_on_rotate = true;
+
 	public Handler() {}
 
 	public void tick() {
@@ -59,7 +61,7 @@ public class Handler {
 		if(current_tetromino != null) {
 			current_tetromino.render(g);
 			for(GameObject cube : new LinkedList<>(((Tetromino)current_tetromino).getCubes())) {
-				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f));
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
 				try {
 					Tetromino_Cube cloned = (Tetromino_Cube) ((Tetromino_Cube) cube).clone();
 					int y_offset = 1;
@@ -101,6 +103,32 @@ public class Handler {
 					if(object.getY() == cube.getY() + (y_offset * Game.TILESIZE) && object.getX() == cube.getX() + (x_offset * Game.TILESIZE)) {
 						return false;
 					}
+					Rectangle cube_bnds = cube.getBounds();
+					cube_bnds.x += x_offset * Game.TILESIZE;
+					cube_bnds.y += y_offset * Game.TILESIZE;
+					if(object.getBounds().intersects(cube_bnds)) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean canMoveCubes(int x_offset, int y_offset, LinkedList<GameObject> cubes) {
+		for(GameObject cube : cubes) {
+			for(int i=0; i< objects.size(); i++) {
+				GameObject object = objects.get(i);
+				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
+					if(object.getY() == cube.getY() + (y_offset * Game.TILESIZE) && object.getX() == cube.getX() + (x_offset * Game.TILESIZE)) {
+						return false;
+					}
+					Rectangle cube_bnds = cube.getBounds();
+					cube_bnds.x += x_offset * Game.TILESIZE;
+					cube_bnds.y += y_offset * Game.TILESIZE;
+					if(object.getBounds().intersects(cube_bnds)) {
+						return false;
+					}
 				}
 			}
 		}
@@ -129,20 +157,38 @@ public class Handler {
 		int rotation = cw? current.getRotation() + 90 : current.getRotation() - 90;
 		if(rotation >= 360) rotation -= 360;
 		if(rotation < 0) rotation += 360;
-		LinkedList<GameObject> rotated = ((Tetromino)current_tetromino).getRotatedInstance(rotation);
+		LinkedList<GameObject> rotated = current.getRotatedInstance(rotation);
+		rotated.addAll(current.getCubes());
 		boolean canRotate = true;
+		int cube_offset_x = 0;
+		int cube_offset_y = 0;
 		for(GameObject cube : rotated) {
 			for(GameObject object : objects) {
 				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
-					if(cube.getBounds().intersects(object.getBounds())) {
+					if((cube.getX() == object.getX() && cube.getY() == object.getY()) || (cube.getX() == object.getX() && cube.getY()+Game.TILESIZE == object.getY())) {
 						canRotate = false;
+						cube_offset_x = -((Tetromino_Cube)cube).getOffset_x() / Game.TILESIZE;
+						cube_offset_y = -((Tetromino_Cube)cube).getOffset_y() / Game.TILESIZE;
+					}
+					if(cube.getY() >= 672 || cube.getY()+Game.TILESIZE >= 672) {
+						canRotate = false;
+						cube_offset_x = -1;
+						cube_offset_y = -1;
 					}
 				}
 			}
 		}
 		if(canRotate) {
-			current.setCubes(rotated);
+			current.setCubes(current.getRotatedInstance(rotation));
 			current.setRotation(rotation);
+		} else {
+			if(can_help_on_rotate) {
+				if(canMoveCubes(cube_offset_x, cube_offset_y, rotated) && canMoveCubes(cube_offset_x, cube_offset_y+1, rotated)) {
+					moveTetromino(cube_offset_x, cube_offset_y);
+					current.setCubes(current.getRotatedInstance(rotation));
+					current.setRotation(rotation);
+				}
+			}
 		}
 	}
 
@@ -154,7 +200,7 @@ public class Handler {
 			cube.clearParent();
 		}
 		objects.addAll(((Tetromino)current_tetromino).getCubes());
-		setNextTetromino(64, 64);
+		setNextTetromino(160, 64);
 	}
 
 	private void checkFilledRow() {

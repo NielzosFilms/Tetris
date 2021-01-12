@@ -39,8 +39,9 @@ public class KeyInput extends KeyAdapter {
 						move_speed_timer = 0;
 					}
 					move_speed_timer++;
+				} else {
+					hold_timer++;
 				}
-				hold_timer++;
 			}
 		}
 	}
@@ -50,6 +51,7 @@ public class KeyInput extends KeyAdapter {
 			Boolean[] old = keysDown.get(e.getKeyCode());
 			old[0] = true;
 			keysDown.put(e.getKeyCode(), old);
+			if(!old[1]) hold_timer = 0;
 		}
 	}
 
@@ -75,9 +77,11 @@ public class KeyInput extends KeyAdapter {
 				handler.moveTetromino(0, 1);
 				break;
 			case KeyEvent.VK_UP:
+				handler.can_help_on_rotate = true;
 				handler.rotateTetromino(true);
 				break;
 			case KeyEvent.VK_Z:
+				handler.can_help_on_rotate = true;
 				handler.rotateTetromino(false);
 				break;
 			case KeyEvent.VK_SPACE:

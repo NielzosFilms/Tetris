@@ -20,6 +20,8 @@ public class Wall extends GameObject {
 	@Override
 	public void render(Graphics g) {
 		Game.renderCube(g, x, y, ColorPalette.gray.color, ColorPalette.light_gray.color);
+		g.setColor(ColorPalette.white.color);
+		g.drawRect(x, y, TILESIZE, TILESIZE);
 	}
 
 	@Override

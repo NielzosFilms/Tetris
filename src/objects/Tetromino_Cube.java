@@ -35,6 +35,10 @@ public class Tetromino_Cube extends GameObject implements Cloneable {
 	@Override
 	public void render(Graphics g) {
 		Game.renderCube(g, x, y, color, border_color);
+
+		g.setColor(ColorPalette.purple.color);
+		Rectangle bnds = getBounds();
+		g.drawRect(bnds.x, bnds.y, bnds.width, bnds.height);
 		/*g.setColor(ColorPalette.white.color);
 		g.drawString("" + y, x, y+10);*/
 	}
@@ -44,9 +48,10 @@ public class Tetromino_Cube extends GameObject implements Cloneable {
 		return new Rectangle(x, y, TILESIZE, TILESIZE);
 	}
 
-	public int getOffsetY() {
+	public int getOffset_y() {
 		return offset_y;
 	}
+	public int getOffset_x() { return offset_x; }
 
 	public void clearParent() {
 		this.parent = null;
