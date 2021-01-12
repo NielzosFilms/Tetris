@@ -250,7 +250,7 @@ public class Game extends Canvas implements Runnable {
 
 	public static void saveHighScores() {
 		try {
-			File file = new File("highscores.txt");
+			File file = new File("./highscores.txt");
 			file.createNewFile();
 			FileWriter writer = new FileWriter(file, false);
 			PrintWriter pwOb = new PrintWriter(writer, false);
@@ -262,14 +262,13 @@ public class Game extends Canvas implements Runnable {
 			writer.close();
 
 		} catch (IOException e) {
-			System.out.println("An error occurred.");
 			e.printStackTrace();
 		}
 	}
 
 	public static void loadHighScores() {
 		try {
-			File file = new File("highscores.txt");
+			File file = new File("./highscores.txt");
 			//FileWriter writer = new FileWriter(highscores);
 			if(file.exists()) {
 				BufferedReader br = new BufferedReader(new FileReader(file));
