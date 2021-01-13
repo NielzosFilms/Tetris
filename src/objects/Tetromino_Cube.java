@@ -12,12 +12,16 @@ public class Tetromino_Cube extends GameObject implements Cloneable {
 	private GameObject parent;
 	private int offset_x, offset_y;
 	public Tetromino_Cube(int x, int y, Color color, Color border_color, GameObject parent) {
-		super(parent.getX() + x, parent.getX() + y, ID.tetromino_cube);
+		super(x, y, ID.tetromino_cube);
 		this.offset_x = x;
 		this.offset_y = y;
 		this.color = color;
 		this.border_color = border_color;
 		this.parent = parent;
+		if(this.parent != null) {
+			this.x = this.parent.getX() + offset_x;
+			this.y = this.parent.getY() + offset_y;
+		}
 	}
 
 	public Object clone() throws CloneNotSupportedException {
@@ -35,8 +39,8 @@ public class Tetromino_Cube extends GameObject implements Cloneable {
 	@Override
 	public void render(Graphics g) {
 		Game.renderCube(g, x, y, color, border_color);
-
-		g.setColor(ColorPalette.purple.color);
+		//g.setColor(color);
+		//g.drawRect(x, y, Game.TILESIZE, Game.TILESIZE);
 	}
 
 	@Override

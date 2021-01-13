@@ -1,5 +1,6 @@
 package system;
 
+import objects.Tetromino_Cube;
 import objects.Wall;
 import objects.tetrominos.Tetromino_I;
 import objects.tetrominos.Tetromino_J;
@@ -277,7 +278,6 @@ public class Game extends Canvas implements Runnable {
 				for(String line; (line = br.readLine()) != null; ) {
 					highscores.add(Integer.parseInt(line));
 				}
-				System.out.println(highscores);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -286,6 +286,25 @@ public class Game extends Canvas implements Runnable {
 
 	public static void main(String[] args) {
 		loadHighScores();
+		/*try {
+			File file = new File("./level.txt");
+			file.createNewFile();
+			FileWriter writer = new FileWriter(file, false);
+			PrintWriter pwOb = new PrintWriter(writer, false);
+			pwOb.flush();
+			for(int y=0; y<20; y++) {
+				StringBuilder line = new StringBuilder();
+				for(int x=0; x<10; x++) {
+					line.append("O");
+				}
+				pwOb.println(line);
+			}
+			pwOb.close();
+			writer.close();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
 		canvas = new Game();
 	}
 
