@@ -417,15 +417,15 @@ public class Handler {
 				switch (lines_cleared) {
 					case 1:
 						System.out.println("t_spin single");
-						score = 100 * level;
+						score = 200 * level;
 						break;
 					case 2:
 						System.out.println("t_spin double");
-						score = 300 * level;
+						score = 400 * level;
 						break;
 					case 3:
 						System.out.println("t_spin triple");
-						score = 500 * level;
+						score = 1600 * level;
 						break;
 				}
 			} else {
@@ -448,16 +448,16 @@ public class Handler {
 			int line_score = 0;
 			switch (lines_cleared) {
 				case 1:
-					line_score = 40;
-					break;
-				case 2:
 					line_score = 100;
 					break;
-				case 3:
+				case 2:
 					line_score = 300;
 					break;
+				case 3:
+					line_score = 500;
+					break;
 				case 4:
-					line_score = 1200;
+					line_score = 800;
 					break;
 			}
 			score = level * line_score;
