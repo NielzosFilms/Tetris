@@ -12,9 +12,11 @@ public class AudioFiles {
 			defeat = new AudioClip("sounds/defeat.wav"),
 			place = new AudioClip("sounds/place.wav"),
 			tetris = new AudioClip("sounds/tetris.wav"),
-			next_level = new AudioClip("sounds/next_level_2.wav");
+			next_level = new AudioClip("sounds/next_level_2.wav"),
+			t_spin_b2b = new AudioClip("sounds/t_spin_b2b.wav"),
+			t_spin = new AudioClip("sounds/t_spin_place.wav")
 	;
-	
+
 	public AudioFiles() {}
 	
 }

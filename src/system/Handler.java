@@ -27,7 +27,7 @@ public class Handler {
 	private int timer = 0;
 
 	private int total_lines_cleared = 0;
-	private int LINES_NEEDED_FOR_NEXT_LEVEL = 3 + Game.current_level;
+	private int LINES_NEEDED_FOR_NEXT_LEVEL = 4 + Game.current_level;
 
 	public boolean can_help_on_rotate = true;
 
@@ -99,8 +99,12 @@ public class Handler {
 				try {
 					Tetromino_Cube cloned = (Tetromino_Cube) ((Tetromino_Cube) cube).clone();
 					int y_offset = 1;
-					while(canMove(0, y_offset)) {
-						y_offset++;
+					for(int i=0; i<Game.PLAYSPACE_HEIGHT-2; i++) {
+						if(canMove(0, y_offset)) {
+							y_offset++;
+						} else {
+							break;
+						}
 					}
 					y_offset -=1;
 					cloned.setY(cloned.getY() + (y_offset * cube.TILESIZE));
@@ -174,8 +178,12 @@ public class Handler {
 
 	public void moveTetrominoToBottom() {
 		int y_offset = 1;
-		while(canMove(0, y_offset)) {
-			y_offset++;
+		for(int i=0; i<Game.PLAYSPACE_HEIGHT-2; i++) {
+			if(canMove(0, y_offset)) {
+				y_offset++;
+			} else {
+				break;
+			}
 		}
 		moveTetromino(0, y_offset-1);
 		plantTetromino();
@@ -189,7 +197,6 @@ public class Handler {
 		if(rotation >= 360) rotation -= 360;
 		if(rotation < 0) rotation += 360;
 		LinkedList<GameObject> rotated = current.getRotatedInstance(rotation);
-		//rotated.addAll(current.getCubes());
 		boolean canRotate = true;
 		boolean potential_t_spin = false;
 		int cube_offset_x = 0;
@@ -216,23 +223,32 @@ public class Handler {
 				if(object.getId() == ID.tetromino_cube) {
 					if(cube.getBounds().intersects(object.getBounds())) {
 						canRotate = false;
-						if(current instanceof Tetromino_T) potential_t_spin = true;
 						if(cube.getY() > current_tetromino.getY()) cube_offset_y -= 1;
 						if(cube.getY() < current_tetromino.getY()) cube_offset_y += 1;
 					}
 				}
 			}
+			if(current instanceof Tetromino_T) potential_t_spin = true;
 		}
 		if(canRotate) {
 			AudioPlayer.playSound(AudioFiles.move_tetromino, Game.VOLUME, false, 0);
 			current.setCubes(current.getRotatedInstance(rotation));
 			current.setRotation(rotation);
+			if(potential_t_spin) {
+				if(!canMove(0, 1)) {
+					timer = 0;
+					t_spin_moves.add(rotation);
+					AudioPlayer.playSound(AudioFiles.t_spin, Game.VOLUME, false, 0);
+				}
+
+			}
 		} else {
 			if(can_help_on_rotate) {
 				Point[] offsets;
 				if(potential_t_spin) {
 					offsets = new Point[]{
 							new Point(1, 3),
+							new Point(-1, 3),
 							new Point(-1, 1),
 							new Point(1, 1),
 							new Point(0, 1),
@@ -265,6 +281,7 @@ public class Handler {
 						if(potential_t_spin) {
 							timer = 0;
 							t_spin_moves.add(rotation);
+							AudioPlayer.playSound(AudioFiles.t_spin, Game.VOLUME, false, 0);
 						}
 						break;
 					}
@@ -314,13 +331,10 @@ public class Handler {
 			}
 		}
 		if(rows_cleared == 4) {
-			AudioPlayer.playSound(AudioFiles.explosion_2, Game.VOLUME, false, 0);
-			AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 			for(GameObject cube : cleared_cubes) {
 				addObject(new Effect_Clear_Cube(cube.getX(), cube.getY(), 30f));
 			}
 		} else if(rows_cleared > 0) {
-			AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
 			for(GameObject cube : cleared_cubes) {
 				addObject(new Effect_Clear_Cube(cube.getX(), cube.getY(), 10f));
 			}
@@ -340,16 +354,18 @@ public class Handler {
 			current_tetromino = getNewTetromino(x, y);
 		}
 		GameObject new_tetromino = getNewTetromino(14*Game.TILESIZE, 3*Game.TILESIZE);
-		while(getHistoryCount(current_tetromino) >= 3) {
-			new_tetromino = getNewTetromino(14*Game.TILESIZE, 3*Game.TILESIZE);
+		if(getHistoryCount(current_tetromino) >= 2) {
+			while (current_tetromino.getClass() == new_tetromino.getClass()) {
+				new_tetromino = getNewTetromino(14 * Game.TILESIZE, 3 * Game.TILESIZE);
+			}
 		}
 		next_tetromino = new_tetromino;
 
 		if(tetromino_history.size() > 0) {
 			tetromino_history.add(0, current_tetromino);
 		} else tetromino_history.add(current_tetromino);
-		while(tetromino_history.size() > 3) {
-			tetromino_history.remove(2);
+		while(tetromino_history.size() >= 4) {
+			tetromino_history.remove(3);
 		}
 		t_spin_moves.clear();
 	}
@@ -459,14 +475,20 @@ public class Handler {
 				switch (lines_cleared) {
 					case 1:
 						System.out.println("t_spin single");
+						AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
+						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 200 * level;
 						break;
 					case 2:
 						System.out.println("t_spin double");
+						AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
+						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 400 * level;
 						break;
 					case 3:
 						System.out.println("t_spin triple");
+						AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
+						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 1600 * level;
 						break;
 				}
@@ -474,14 +496,20 @@ public class Handler {
 				switch (lines_cleared) {
 					case 1:
 						System.out.println("B2B t_spin single");
+						AudioPlayer.playSound(AudioFiles.t_spin_b2b, Game.VOLUME, false, 0);
+						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 1200 * level;
 						break;
 					case 2:
 						System.out.println("B2B t_spin double");
+						AudioPlayer.playSound(AudioFiles.t_spin_b2b, Game.VOLUME, false, 0);
+						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 1800 * level;
 						break;
 					case 3:
 						System.out.println("B2B t_spin triple");
+						AudioPlayer.playSound(AudioFiles.t_spin_b2b, Game.VOLUME, false, 0);
+						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 2400 * level;
 						break;
 				}
@@ -491,15 +519,20 @@ public class Handler {
 			switch (lines_cleared) {
 				case 1:
 					line_score = 100;
+					AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
 					break;
 				case 2:
 					line_score = 300;
+					AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
 					break;
 				case 3:
 					line_score = 500;
+					AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
 					break;
 				case 4:
 					line_score = 800;
+					AudioPlayer.playSound(AudioFiles.explosion_2, Game.VOLUME, false, 0);
+					AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 					break;
 			}
 			score = level * line_score;

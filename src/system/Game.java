@@ -168,6 +168,9 @@ public class Game extends Canvas implements Runnable {
 
 			g.drawString("[C]", 12*TILESIZE+8, 18*TILESIZE);
 			g.drawString("Hold Tetromino", 14*TILESIZE, 18*TILESIZE);
+
+			g.drawString("[R]", 12*TILESIZE+8, 18*TILESIZE+16);
+			g.drawString("Quick restart", 14*TILESIZE, 18*TILESIZE+16);
 		} else if(gameState == GameState.game) {
 			g.setColor(ColorPalette.light_blue.color);
 			g.setFont(new Font("Arial", Font.BOLD, 15));
