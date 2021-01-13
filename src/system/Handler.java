@@ -19,6 +19,8 @@ public class Handler {
 	private GameObject current_tetromino;
 	private GameObject next_tetromino;
 	private GameObject holding_tetromino;
+	private GameObject placed_tetromino;
+	private LinkedList<Integer> placed_t_spin_moves = new LinkedList<>();
 	private boolean can_hold = true;
 	private int timer = 0;
 
@@ -26,6 +28,8 @@ public class Handler {
 	private int LINES_NEEDED_FOR_NEXT_LEVEL = 3 + Game.current_level;
 
 	public boolean can_help_on_rotate = true;
+
+	private LinkedList<Integer> t_spin_moves = new LinkedList<>();
 
 	public Handler() {}
 
@@ -221,13 +225,13 @@ public class Handler {
 							new Point(1, 3),
 							new Point(-1, 1),
 							new Point(1, 1),
-							new Point(1, -1),
-							new Point(-1, -1),
 							new Point(0, 1),
-							new Point(0, -1),
 							new Point(1, 0),
 							new Point(-1, 0),
 							new Point(0, 0),
+							new Point(1, -1),
+							new Point(-1, -1),
+							new Point(0, -1),
 					};
 				} else {
 					offsets = new Point[]{
@@ -244,10 +248,14 @@ public class Handler {
 					};
 				}
 				for(Point offset : offsets) {
-					if(canMoveCubes(cube_offset_x + offset.x, cube_offset_y + offset.y, rotated) ) { //&& canMoveCubes(cube_offset_x, cube_offset_y+1, rotated)) {
+					if(canMoveCubes(cube_offset_x + offset.x, cube_offset_y + offset.y, rotated) ) {
 						current.setCubes(current.getRotatedInstance(rotation));
 						current.setRotation(rotation);
 						moveTetromino(cube_offset_x + offset.x, cube_offset_y + offset.y);
+						if(potential_t_spin) {
+							timer = 0;
+							t_spin_moves.add(rotation);
+						}
 						break;
 					}
 				}
@@ -265,6 +273,8 @@ public class Handler {
 			cube.clearParent();
 		}
 		objects.addAll(((Tetromino)current_tetromino).getCubes());
+		placed_tetromino = current_tetromino;
+		placed_t_spin_moves = new LinkedList<>(t_spin_moves);
 		setNextTetromino();
 	}
 
@@ -310,6 +320,7 @@ public class Handler {
 			current_tetromino = getNewTetromino(x, y);
 		}
 		next_tetromino = getNewTetromino(14*Game.TILESIZE, 3*Game.TILESIZE);
+		t_spin_moves.clear();
 	}
 
 	public void holdTetromino() {
@@ -346,7 +357,6 @@ public class Handler {
 
 		/*try {
 			File file = new File("./level.txt");
-			//FileWriter writer = new FileWriter(highscores);
 			if(file.exists()) {
 				BufferedReader br = new BufferedReader(new FileReader(file));
 				int y = 0;
@@ -401,22 +411,58 @@ public class Handler {
 	}
 
 	public int calculateScore(int lines_cleared, int level) {
-		int line_score = 0;
-		switch(lines_cleared) {
-			case 1:
-				line_score = 40;
-				break;
-			case 2:
-				line_score = 100;
-				break;
-			case 3:
-				line_score = 300;
-				break;
-			case 4:
-				line_score = 1200;
-				break;
+		int score = 0;
+		if(placed_tetromino instanceof Tetromino_T && placed_t_spin_moves.size() > 0) {
+			if(placed_t_spin_moves.size() == 1) {
+				switch (lines_cleared) {
+					case 1:
+						System.out.println("t_spin single");
+						score = 100 * level;
+						break;
+					case 2:
+						System.out.println("t_spin double");
+						score = 300 * level;
+						break;
+					case 3:
+						System.out.println("t_spin triple");
+						score = 500 * level;
+						break;
+				}
+			} else {
+				switch (lines_cleared) {
+					case 1:
+						System.out.println("B2B t_spin single");
+						score = 1200 * level;
+						break;
+					case 2:
+						System.out.println("B2B t_spin double");
+						score = 1800 * level;
+						break;
+					case 3:
+						System.out.println("B2B t_spin triple");
+						score = 2400 * level;
+						break;
+				}
+			}
+		} else {
+			int line_score = 0;
+			switch (lines_cleared) {
+				case 1:
+					line_score = 40;
+					break;
+				case 2:
+					line_score = 100;
+					break;
+				case 3:
+					line_score = 300;
+					break;
+				case 4:
+					line_score = 1200;
+					break;
+			}
+			score = level * line_score;
 		}
 
-		return (level + 1) * line_score;
+		return score;
 	}
 }
