@@ -7,6 +7,10 @@ import objects.Tetromino_Cube;
 import objects.tetrominos.*;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -16,6 +20,8 @@ public class Handler {
 	private GameObject current_tetromino;
 	private GameObject next_tetromino;
 	private GameObject holding_tetromino;
+	private GameObject placed_tetromino;
+	private LinkedList<Integer> placed_t_spin_moves = new LinkedList<>();
 	private LinkedList<GameObject> tetromino_history = new LinkedList<>();
 	private boolean can_hold = true;
 	private int timer = 0;
@@ -24,6 +30,8 @@ public class Handler {
 	private int LINES_NEEDED_FOR_NEXT_LEVEL = 3 + Game.current_level;
 
 	public boolean can_help_on_rotate = true;
+
+	private LinkedList<Integer> t_spin_moves = new LinkedList<>();
 
 	public Handler() {}
 
@@ -150,12 +158,6 @@ public class Handler {
 					if(object.getY() == cube.getY() + (y_offset * Game.TILESIZE) && object.getX() == cube.getX() + (x_offset * Game.TILESIZE)) {
 						return false;
 					}
-					Rectangle cube_bnds = cube.getBounds();
-					cube_bnds.x += x_offset * Game.TILESIZE;
-					cube_bnds.y += y_offset * Game.TILESIZE;
-					if(object.getBounds().intersects(cube_bnds)) {
-						return false;
-					}
 				}
 			}
 		}
@@ -187,22 +189,36 @@ public class Handler {
 		if(rotation >= 360) rotation -= 360;
 		if(rotation < 0) rotation += 360;
 		LinkedList<GameObject> rotated = current.getRotatedInstance(rotation);
-		rotated.addAll(current.getCubes());
+		//rotated.addAll(current.getCubes());
 		boolean canRotate = true;
+		boolean potential_t_spin = false;
 		int cube_offset_x = 0;
 		int cube_offset_y = 0;
 		for(GameObject cube : rotated) {
+			cube.tick();
+			if(cube.getY() >= (Game.PLAYSPACE_HEIGHT-1)*Game.TILESIZE) {
+				canRotate = false;
+				cube_offset_y += -1;
+			}
+			if(cube.getY() < Game.TILESIZE) {
+				canRotate = false;
+				cube_offset_y += 1;
+			}
+			if(cube.getX() < Game.TILESIZE) {
+				canRotate = false;
+				cube_offset_x += 1;
+			}
+			if(cube.getX() >= (Game.PLAYSPACE_WIDTH-1)*Game.TILESIZE) {
+				canRotate = false;
+				cube_offset_x += -1;
+			}
 			for(GameObject object : objects) {
-				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
-					if((cube.getX() == object.getX() && cube.getY() == object.getY()) || (cube.getX() == object.getX() && cube.getY()+Game.TILESIZE == object.getY())) {
+				if(object.getId() == ID.tetromino_cube) {
+					if(cube.getBounds().intersects(object.getBounds())) {
 						canRotate = false;
-						cube_offset_x = -((Tetromino_Cube)cube).getOffset_x() / Game.TILESIZE;
-						cube_offset_y = -((Tetromino_Cube)cube).getOffset_y() / Game.TILESIZE;
-					}
-					if(cube.getY() >= 672 || cube.getY()+Game.TILESIZE >= 672) {
-						canRotate = false;
-						cube_offset_x = -1;
-						cube_offset_y = -1;
+						if(current instanceof Tetromino_T) potential_t_spin = true;
+						if(cube.getY() > current_tetromino.getY()) cube_offset_y -= 1;
+						if(cube.getY() < current_tetromino.getY()) cube_offset_y += 1;
 					}
 				}
 			}
@@ -213,11 +229,47 @@ public class Handler {
 			current.setRotation(rotation);
 		} else {
 			if(can_help_on_rotate) {
-				if(canMoveCubes(cube_offset_x, cube_offset_y, rotated) ){//&& canMoveCubes(cube_offset_x, cube_offset_y+1, rotated)) {
-					current.setCubes(current.getRotatedInstance(rotation));
-					current.setRotation(rotation);
-					moveTetromino(cube_offset_x, cube_offset_y);
+				Point[] offsets;
+				if(potential_t_spin) {
+					offsets = new Point[]{
+							new Point(1, 3),
+							new Point(-1, 1),
+							new Point(1, 1),
+							new Point(0, 1),
+							new Point(1, 0),
+							new Point(-1, 0),
+							new Point(0, 0),
+							new Point(1, -1),
+							new Point(-1, -1),
+							new Point(0, -1),
+					};
+				} else {
+					offsets = new Point[]{
+							new Point(0, 0),
+							new Point(0, 1),
+							new Point(0, -1),
+							new Point(1, 0),
+							new Point(-1, 0),
+							new Point(-1, 1),
+							new Point(1, 1),
+							new Point(1, -1),
+							new Point(-1, -1),
+							new Point(1, 3),
+					};
 				}
+				for(Point offset : offsets) {
+					if(canMoveCubes(cube_offset_x + offset.x, cube_offset_y + offset.y, rotated) ) {
+						current.setCubes(current.getRotatedInstance(rotation));
+						current.setRotation(rotation);
+						moveTetromino(cube_offset_x + offset.x, cube_offset_y + offset.y);
+						if(potential_t_spin) {
+							timer = 0;
+							t_spin_moves.add(rotation);
+						}
+						break;
+					}
+				}
+				can_help_on_rotate = false;
 			}
 		}
 	}
@@ -231,6 +283,8 @@ public class Handler {
 			cube.clearParent();
 		}
 		objects.addAll(((Tetromino)current_tetromino).getCubes());
+		placed_tetromino = current_tetromino;
+		placed_t_spin_moves = new LinkedList<>(t_spin_moves);
 		setNextTetromino();
 		AudioPlayer.playSound(AudioFiles.place, Game.VOLUME, false, 0);
 	}
@@ -297,6 +351,7 @@ public class Handler {
 		while(tetromino_history.size() > 3) {
 			tetromino_history.remove(2);
 		}
+		t_spin_moves.clear();
 	}
 
 	public void holdTetromino() {
@@ -330,6 +385,25 @@ public class Handler {
 			}
 		}
 		objects.removeAll(cubes);
+
+		/*try {
+			File file = new File("./level.txt");
+			if(file.exists()) {
+				BufferedReader br = new BufferedReader(new FileReader(file));
+				int y = 0;
+				for(String line; (line = br.readLine()) != null; ) {
+					for(int x=0; x<line.toCharArray().length; x++) {
+						if(line.toCharArray()[x] == 'X') {
+							addObject(new Tetromino_Cube(Game.TILESIZE + x * Game.TILESIZE, Game.TILESIZE+ y * Game.TILESIZE, ColorPalette.gray.color, ColorPalette.dark_gray.color, null));
+						}
+					}
+					y++;
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}*/
+
 		next_tetromino = null;
 		holding_tetromino = null;
 		setNextTetromino();
@@ -379,20 +453,56 @@ public class Handler {
 	}
 
 	public int calculateScore(int lines_cleared, int level) {
-		int line_score = 0;
-		switch(lines_cleared) {
-			case 1:
-				line_score = 40;
-				break;
-			case 2:
-				line_score = 100;
-				break;
-			case 3:
-				line_score = 300;
-				break;
-			case 4:
-				line_score = 1200;
-				break;
+		int score = 0;
+		if(placed_tetromino instanceof Tetromino_T && placed_t_spin_moves.size() > 0) {
+			if(placed_t_spin_moves.size() == 1) {
+				switch (lines_cleared) {
+					case 1:
+						System.out.println("t_spin single");
+						score = 200 * level;
+						break;
+					case 2:
+						System.out.println("t_spin double");
+						score = 400 * level;
+						break;
+					case 3:
+						System.out.println("t_spin triple");
+						score = 1600 * level;
+						break;
+				}
+			} else {
+				switch (lines_cleared) {
+					case 1:
+						System.out.println("B2B t_spin single");
+						score = 1200 * level;
+						break;
+					case 2:
+						System.out.println("B2B t_spin double");
+						score = 1800 * level;
+						break;
+					case 3:
+						System.out.println("B2B t_spin triple");
+						score = 2400 * level;
+						break;
+				}
+			}
+		} else {
+			int line_score = 0;
+			switch (lines_cleared) {
+				case 1:
+					line_score = 100;
+					break;
+				case 2:
+					line_score = 300;
+					break;
+				case 3:
+					line_score = 500;
+					break;
+				case 4:
+					line_score = 800;
+					break;
+			}
+			score = level * line_score;
 		}
 
 		return (level + 1) * line_score;

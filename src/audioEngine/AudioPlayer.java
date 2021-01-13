@@ -9,7 +9,7 @@ public class AudioPlayer {
 
 	//vol = 0 > 1
 	public static synchronized void playSound(AudioClip sfx, double vol, boolean loop, int start_ms) {
-		Thread thread = new Thread() {
+		/*Thread thread = new Thread() {
 			public void run() {
 				try {
 					
@@ -30,9 +30,9 @@ public class AudioPlayer {
 					
 				} catch (Exception e) {
 					e.printStackTrace();
-				}	
+				}
 			}
-		}; thread.start();
+		}; thread.start();*/
 	}
 	
 	private static void setVol(double vol, Clip clip) {
