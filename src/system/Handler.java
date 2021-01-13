@@ -505,6 +505,6 @@ public class Handler {
 			score = level * line_score;
 		}
 
-		return (level + 1) * line_score;
+		return score;
 	}
 }
