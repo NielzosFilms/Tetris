@@ -77,9 +77,11 @@ public class KeyInput extends KeyAdapter {
 		if(Game.gameState == GameState.game) {
 			switch(keyCode) {
 				case KeyEvent.VK_RIGHT:
+					if(!handler.canMove(0, 1)) handler.timer_slack = true;
 					handler.moveTetromino(1, 0);
 					break;
 				case KeyEvent.VK_LEFT:
+					if(!handler.canMove(0, 1)) handler.timer_slack = true;
 					handler.moveTetromino(-1, 0);
 					break;
 				case KeyEvent.VK_DOWN:
@@ -87,10 +89,12 @@ public class KeyInput extends KeyAdapter {
 					Game.current_score += 1;
 					break;
 				case KeyEvent.VK_UP:
+					if(!handler.canMove(0, 1)) handler.timer_slack = true;
 					handler.can_help_on_rotate = true;
 					handler.rotateTetromino(true);
 					break;
 				case KeyEvent.VK_Z:
+					if(!handler.canMove(0, 1)) handler.timer_slack = true;
 					handler.can_help_on_rotate = true;
 					handler.rotateTetromino(false);
 					break;
@@ -117,7 +121,6 @@ public class KeyInput extends KeyAdapter {
 			switch(keyCode) {
 				case KeyEvent.VK_SPACE:
 					AudioPlayer.playSound(AudioFiles.blip, Game.VOLUME, false, 0);
-					Game.saveHighScores();
 					Game.gameState = GameState.start_screen;
 					break;
 			}

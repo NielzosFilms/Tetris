@@ -26,7 +26,8 @@ public class Handler {
 	private GameObject placed_tetromino;
 	private LinkedList<Integer> placed_t_spin_moves = new LinkedList<>();
 	private boolean can_hold = true;
-	private int timer = 0;
+	public int timer = 0;
+	public boolean timer_slack = false;
 
 	private int total_lines_cleared = 0;
 	private int LINES_NEEDED_FOR_NEXT_LEVEL = 4 + Game.current_level;
@@ -47,11 +48,14 @@ public class Handler {
 		}
 		if(Game.gameState == GameState.game) {
 			if (current_tetromino != null) {
-				if (timer >= (MAX_TIMER - (Game.current_level * 4))) {
-					timer = 0;
-					if (canMove(0, 1)) {
+				if(canMove(0, 1)) {
+					if (timer >= (MAX_TIMER - (Game.current_level * 4))) {
+						timer = 0;
 						current_tetromino.setY(current_tetromino.getY() + Game.TILESIZE);
-					} else {
+					}
+				} else {
+					if (timer >= (timer_slack ? MAX_TIMER*3 : MAX_TIMER)) {
+						timer = 0;
 						plantTetromino();
 					}
 				}
@@ -73,11 +77,16 @@ public class Handler {
 			}
 			for(int i=0; i<objects.size(); i++) {
 				if(objects.get(i).getId() == ID.tetromino_cube) {
-					if(objects.get(i).getY() < Game.TILESIZE * 2) {
-						if(Game.gameState != GameState.end_screen) {
-							Game.gameState = GameState.end_screen;
-							Game.addHighScore(Game.current_score);
-							AudioPlayer.playSound(AudioFiles.defeat, Game.VOLUME, false, 0);
+					if(current_tetromino.getX() == 160 && current_tetromino.getY() == 64) {
+						for(GameObject cube : ((Tetromino)current_tetromino).getCubes()) {
+							if(cube.getBounds().intersects(objects.get(i).getBounds())) {
+								if(Game.gameState != GameState.end_screen) {
+									Game.gameState = GameState.end_screen;
+									Game.addHighScore(Game.current_score);
+									Game.saveHighScores();
+									AudioPlayer.playSound(AudioFiles.defeat, Game.VOLUME, false, 0);
+								}
+							}
 						}
 					}
 				}
@@ -139,7 +148,7 @@ public class Handler {
 		return this.current_tetromino;
 	}
 
-	private boolean canMove(int x_offset, int y_offset) {
+	public boolean canMove(int x_offset, int y_offset) {
 		if(current_tetromino == null) return false;
 		for(GameObject cube : ((Tetromino)current_tetromino).getCubes()) {
 			for(int i=0; i< objects.size(); i++) {
