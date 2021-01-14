@@ -3,6 +3,8 @@ package system;
 import audioEngine.AudioFiles;
 import audioEngine.AudioPlayer;
 import objects.Effect_Clear_Cube;
+import objects.Effect_Score_Text;
+import objects.Effect_Special_Text;
 import objects.Tetromino_Cube;
 import objects.tetrominos.*;
 
@@ -34,6 +36,8 @@ public class Handler {
 	private LinkedList<Integer> t_spin_moves = new LinkedList<>();
 
 	private LinkedList<Integer> cleared_lines_combo = new LinkedList<>();
+
+	private boolean last_clear_tetris = false;
 
 	public Handler() {}
 
@@ -305,13 +309,10 @@ public class Handler {
 		placed_t_spin_moves = new LinkedList<>(t_spin_moves);
 		setNextTetromino();
 		AudioPlayer.playSound(AudioFiles.place, Game.VOLUME, false, 0);
-		boolean lines_cleared = checkFilledRow();
-		if(lines_cleared && cleared_lines_combo.size() > 1) {
-			Game.current_score += calculateComboScore(cleared_lines_combo, Game.current_level);
-		} else if(!lines_cleared) cleared_lines_combo.clear();
+		checkFilledRow();
 	}
 
-	private boolean checkFilledRow() {
+	private void checkFilledRow() {
 		int rows_cleared = 0;
 		LinkedList<GameObject> cleared_cubes = new LinkedList<>();
 		for(int y=Game.TILESIZE; y<Game.SCREEN_HEIGHT-Game.TILESIZE; y+=Game.TILESIZE) {
@@ -347,8 +348,20 @@ public class Handler {
 		total_lines_cleared += rows_cleared;
 
 		cleared_lines_combo.add(rows_cleared);
-		Game.current_score += calculateScore(rows_cleared, Game.current_level);
-		return rows_cleared > 0;
+		int score_add = 0;
+
+		if(rows_cleared > 0 && cleared_lines_combo.size() > 1) {
+			score_add = calculateComboScore(cleared_lines_combo, Game.current_level);
+		} else  {
+			score_add = calculateScore(rows_cleared, Game.current_level);
+			if(rows_cleared == 0) {
+				cleared_lines_combo.clear();
+			}
+		}
+		if(score_add > 0) {
+			Game.current_score += score_add;
+			addObject(new Effect_Score_Text("+" + score_add));
+		}
 	}
 
 	public void setNextTetromino() {
@@ -508,22 +521,23 @@ public class Handler {
 	public int calculateScore(int lines_cleared, int level) {
 		int score = 0;
 		if(placed_tetromino instanceof Tetromino_T && placed_t_spin_moves.size() > 0) {
+			last_clear_tetris = false;
 			if(placed_t_spin_moves.size() == 1) {
 				switch (lines_cleared) {
 					case 1:
-						System.out.println("T-Spin Single");
+						addObject(new Effect_Special_Text("T-Spin Single"));
 						AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
 						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 800 * level;
 						break;
 					case 2:
-						System.out.println("T-Spin Double");
+						addObject(new Effect_Special_Text("T-Spin Double"));
 						AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
 						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 1200 * level;
 						break;
 					case 3:
-						System.out.println("T-Spin Triple");
+						addObject(new Effect_Special_Text("T-Spin Triple"));
 						AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
 						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 1600 * level;
@@ -532,19 +546,19 @@ public class Handler {
 			} else {
 				switch (lines_cleared) {
 					case 1:
-						System.out.println("B2B T-Spin Single");
+						addObject(new Effect_Special_Text("B2B T-Spin Single"));
 						AudioPlayer.playSound(AudioFiles.t_spin_b2b, Game.VOLUME, false, 0);
 						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 1200 * level;
 						break;
 					case 2:
-						System.out.println("B2B T-Spin Double");
+						addObject(new Effect_Special_Text("B2B T-Spin Double"));
 						AudioPlayer.playSound(AudioFiles.t_spin_b2b, Game.VOLUME, false, 0);
 						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 1800 * level;
 						break;
 					case 3:
-						System.out.println("B2B T-Spin Triple");
+						addObject(new Effect_Special_Text("B2B T-Spin Triple"));
 						AudioPlayer.playSound(AudioFiles.t_spin_b2b, Game.VOLUME, false, 0);
 						AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
 						score = 2400 * level;
@@ -557,19 +571,32 @@ public class Handler {
 				case 1:
 					line_score = 100;
 					AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
+					addObject(new Effect_Special_Text("Single"));
+					last_clear_tetris = false;
 					break;
 				case 2:
 					line_score = 300;
 					AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
+					addObject(new Effect_Special_Text("Double"));
+					last_clear_tetris = false;
 					break;
 				case 3:
 					line_score = 500;
 					AudioPlayer.playSound(AudioFiles.explosion_1, Game.VOLUME, false, 0);
+					addObject(new Effect_Special_Text("Triple"));
+					last_clear_tetris = false;
 					break;
 				case 4:
-					line_score = 800;
 					AudioPlayer.playSound(AudioFiles.explosion_2, Game.VOLUME, false, 0);
 					AudioPlayer.playSound(AudioFiles.tetris, Game.VOLUME, false, 0);
+					if(last_clear_tetris) {
+						addObject(new Effect_Special_Text("B2B Tetris"));
+						line_score = 1200;
+					} else {
+						line_score = 800;
+						addObject(new Effect_Special_Text("Tetris"));
+						last_clear_tetris = true;
+					}
 					break;
 			}
 			score = level * line_score;
@@ -579,11 +606,7 @@ public class Handler {
 
 	private int calculateComboScore(LinkedList<Integer> cleared_lines_combo, int current_level) {
 		int index = cleared_lines_combo.size()-1;
-		if(cleared_lines_combo.get(index) == 4 && cleared_lines_combo.get(index-1) == 4) {
-			System.out.println("B2B Tetris");
-			return 1200 * current_level;
-		}
-		System.out.println("Combo");
+		addObject(new Effect_Special_Text(cleared_lines_combo.size() + " x Combo"));
 		return cleared_lines_combo.get(index)*current_level+50*current_level;
 	}
 }

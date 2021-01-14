@@ -29,7 +29,7 @@ public class AudioPlayer {
 					}
 					
 				} catch (Exception e) {
-					e.printStackTrace();
+					//e.printStackTrace();
 				}
 			}
 		}; thread.start();
