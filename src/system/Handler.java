@@ -54,7 +54,7 @@ public class Handler {
 						current_tetromino.setY(current_tetromino.getY() + Game.TILESIZE);
 					}
 				} else {
-					if (timer >= (timer_slack ? MAX_TIMER*3 : MAX_TIMER)) {
+					if (timer >= (timer_slack ? MAX_TIMER*2 : MAX_TIMER)) {
 						timer = 0;
 						plantTetromino();
 					}
