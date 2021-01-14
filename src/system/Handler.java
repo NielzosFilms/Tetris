@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -20,11 +21,10 @@ public class Handler {
 	private final int MAX_TIMER = 4 * Game.MAX_LEVEL;
 	LinkedList<GameObject> objects = new LinkedList<>();
 	private GameObject current_tetromino;
-	private GameObject next_tetromino;
+	private LinkedList<GameObject> tetromino_sequence = new LinkedList<>();
 	private GameObject holding_tetromino;
 	private GameObject placed_tetromino;
 	private LinkedList<Integer> placed_t_spin_moves = new LinkedList<>();
-	private LinkedList<GameObject> tetromino_history = new LinkedList<>();
 	private boolean can_hold = true;
 	private int timer = 0;
 
@@ -58,7 +58,7 @@ public class Handler {
 				timer++;
 			}
 			if (current_tetromino != null) current_tetromino.tick();
-			if (next_tetromino != null) next_tetromino.tick();
+			if (tetromino_sequence.size() > 1) tetromino_sequence.get(0).tick();
 			if (holding_tetromino != null) holding_tetromino.tick();
 			//checkFilledRow();
 
@@ -84,7 +84,7 @@ public class Handler {
 			}
 		} else if(Game.gameState == GameState.end_screen) {
 			current_tetromino = null;
-			next_tetromino = null;
+			tetromino_sequence.clear();
 			holding_tetromino = null;
 		}
 	}
@@ -94,8 +94,8 @@ public class Handler {
 		for(int i=0; i<objects.size(); i++) {
 			objects.get(i).render(g);
 		}
-		if(next_tetromino != null) {
-			next_tetromino.render(g);
+		if(tetromino_sequence.size() > 1) {
+			tetromino_sequence.get(0).render(g);
 		}
 		if(holding_tetromino != null) holding_tetromino.render(g);
 		if(current_tetromino != null) {
@@ -367,27 +367,19 @@ public class Handler {
 	public void setNextTetromino() {
 		int x = 160;
 		int y = 64;
-		if(next_tetromino != null) {
-			current_tetromino = next_tetromino;
-			current_tetromino.setX(x);
-			current_tetromino.setY(y);
-		} else {
-			current_tetromino = getNewTetromino(x, y);
-		}
-		GameObject new_tetromino = getNewTetromino(14*Game.TILESIZE, 3*Game.TILESIZE);
-		if(getHistoryCount(current_tetromino) >= 2) {
-			while (current_tetromino.getClass() == new_tetromino.getClass()) {
-				new_tetromino = getNewTetromino(14 * Game.TILESIZE, 3 * Game.TILESIZE);
-			}
-		}
-		next_tetromino = new_tetromino;
 
-		if(tetromino_history.size() > 0) {
-			tetromino_history.add(0, current_tetromino);
-		} else tetromino_history.add(current_tetromino);
-		while(tetromino_history.size() >= 4) {
-			tetromino_history.remove(3);
+		if(tetromino_sequence.size() <= 7) {
+			tetromino_sequence.addAll(getNewTetrominoSequence(x, y));
 		}
+
+		current_tetromino = tetromino_sequence.get(0);
+		tetromino_sequence.remove(0);
+		current_tetromino.setX(x);
+		current_tetromino.setY(y);
+
+		tetromino_sequence.get(0).setX(14 * Game.TILESIZE);
+		tetromino_sequence.get(0).setY(3 * Game.TILESIZE);
+
 		t_spin_moves.clear();
 	}
 
@@ -441,7 +433,7 @@ public class Handler {
 			e.printStackTrace();
 		}*/
 
-		next_tetromino = null;
+		tetromino_sequence.clear();
 		holding_tetromino = null;
 		setNextTetromino();
 
@@ -449,16 +441,6 @@ public class Handler {
 		Game.current_score = 0;
 		total_lines_cleared = 0;
 		can_hold = true;
-	}
-
-	private int getHistoryCount(GameObject new_tetromino) {
-		int ret = 0;
-		for(GameObject history : tetromino_history) {
-			if(history.getClass() == new_tetromino.getClass()) {
-				ret++;
-			}
-		}
-		return ret;
 	}
 
 	public GameObject getObjectAtCoords(int x, int y) {
@@ -515,6 +497,20 @@ public class Handler {
 				ret =  new Tetromino_Z(x, y);
 				break;
 		}
+		return ret;
+	}
+
+	private LinkedList<GameObject> getNewTetrominoSequence(int x, int y) {
+		LinkedList<GameObject> ret = new LinkedList<>();
+		ret.add(new Tetromino_I(x, y));
+		ret.add(new Tetromino_J(x, y));
+		ret.add(new Tetromino_L(x, y));
+		ret.add(new Tetromino_O(x, y));
+		ret.add(new Tetromino_S(x, y));
+		ret.add(new Tetromino_T(x, y));
+		ret.add(new Tetromino_Z(x, y));
+
+		Collections.shuffle(ret);
 		return ret;
 	}
 
