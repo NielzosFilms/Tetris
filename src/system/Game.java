@@ -8,6 +8,7 @@ import objects.tetrominos.Tetromino_J;
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -135,18 +136,18 @@ public class Game extends Canvas implements Runnable {
 			g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-			g.setFont(new Font("Arial", Font.BOLD, 30));
+			g.setFont(new Font("Tetris", Font.PLAIN, 30));
 			g.setColor(ColorPalette.light_blue.color);
 			g.drawString("Tetris", 128, 64);
 
-			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.setFont(new Font("Tetris", Font.PLAIN, 20));
 			g.drawString("Press [Space] to start...", 64, 10*TILESIZE);
 
 			g.drawString("Bindings :", 12*TILESIZE+8, 14*TILESIZE);
 
 			drawHighscores(g);
 
-			g.setFont(new Font("Arial", Font.BOLD, 12));
+			g.setFont(new Font("Tetris", Font.PLAIN, 12));
 			g.setColor(ColorPalette.white.color);
 			g.drawString("[Left]", 12*TILESIZE+8, 15*TILESIZE);
 			g.drawString("Move Tetromino", 14*TILESIZE, 15*TILESIZE);
@@ -171,9 +172,12 @@ public class Game extends Canvas implements Runnable {
 
 			g.drawString("[R]", 12*TILESIZE+8, 18*TILESIZE+16);
 			g.drawString("Quick restart", 14*TILESIZE, 18*TILESIZE+16);
-		} else if(gameState == GameState.game) {
+
+			g.drawString("[ESC]", 12*TILESIZE+8, 19*TILESIZE);
+			g.drawString("Pauze game", 14*TILESIZE, 19*TILESIZE);
+		} else if(gameState == GameState.game || gameState == GameState.pauzed) {
 			g.setColor(ColorPalette.light_blue.color);
-			g.setFont(new Font("Arial", Font.BOLD, 15));
+			g.setFont(new Font("Tetris", Font.PLAIN, 15));
 			g.drawString("Score :", 12*TILESIZE+8, 14*TILESIZE-8);
 			g.drawString(String.valueOf(current_score), 14*TILESIZE+8, 14*TILESIZE-8);
 			g.drawString("Level  :", 12*TILESIZE+8, 15*TILESIZE-8);
@@ -181,6 +185,20 @@ public class Game extends Canvas implements Runnable {
 
 			g.drawString("Next :", 12*TILESIZE+8, 2*TILESIZE-8);
 			g.drawString("Holding :", 12*TILESIZE+8, 8*TILESIZE-8);
+
+			if(gameState == GameState.pauzed) {
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
+				g.setColor(ColorPalette.black.color);
+				g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
+
+				g.setColor(ColorPalette.light_blue.color);
+				g.setFont(new Font("Tetris", Font.PLAIN, 30));
+				g.drawString("Game Pauzed", 64, 64);
+
+				g.setFont(new Font("Tetris", Font.PLAIN, 20));
+				g.drawString("Press [ESC] to resume...", 64, 10*TILESIZE);
+			}
 		} else if(gameState == GameState.end_screen) {
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
 			g.setColor(ColorPalette.black.color);
@@ -188,9 +206,9 @@ public class Game extends Canvas implements Runnable {
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
 			g.setColor(ColorPalette.light_blue.color);
-			g.setFont(new Font("Arial", Font.BOLD, 30));
+			g.setFont(new Font("Tetris", Font.PLAIN, 30));
 			g.drawString("Game Over!", 64, 64);
-			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.setFont(new Font("Tetris", Font.PLAIN, 20));
 			g.drawString("Score", 64, 128);
 			g.drawString("Level", 64, 160);
 			g.drawString(":", 144, 128);
@@ -202,22 +220,22 @@ public class Game extends Canvas implements Runnable {
 
 			if(highscores.size() > 0) {
 				if(current_score == highscores.get(0)) {
-					g.setFont(new Font("Arial", Font.BOLD, 20));
+					g.setFont(new Font("Tetris", Font.PLAIN, 20));
 					g.setColor(ColorPalette.yellow.color);
 					g.drawString("NEW HIGHSCORE!", 64, 8*TILESIZE);
 				}
 			}
 
 			g.setColor(ColorPalette.white.color);
-			g.setFont(new Font("Arial", Font.BOLD, 20));
+			g.setFont(new Font("Tetris", Font.PLAIN, 20));
 			g.drawString("Press [Space] to continue...", 64, 10*TILESIZE);
 		}
 
-		g.setFont(new Font("Arial", Font.PLAIN, 10));
+		g.setFont(new Font("Tetris", Font.PLAIN, 10));
 		g.setColor(ColorPalette.white.color);
 		g.drawString("FPS: " + current_fps, 0, 16);
 
-		g.setFont(new Font("Arial", Font.BOLD, 10));
+		g.setFont(new Font("Tetris", Font.PLAIN, 10));
 		g.setColor(ColorPalette.light_blue.color);
 		g.drawString("Created By : NielzosFilms", 8, 22*TILESIZE-12);
 
@@ -227,9 +245,9 @@ public class Game extends Canvas implements Runnable {
 	}
 
 	private void drawHighscores(Graphics g) {
-		g.setFont(new Font("Arial", Font.BOLD, 20));
+		g.setFont(new Font("Tetris", Font.PLAIN, 20));
 		g.drawString("Highscores :", 12*TILESIZE+8, 64);
-		g.setFont(new Font("Arial", Font.BOLD, 15));
+		g.setFont(new Font("Tetris", Font.PLAIN, 15));
 		for(int i=0; i<5; i++) {
 			if(i == 0) {
 				g.setColor(ColorPalette.yellow.color);
@@ -306,25 +324,13 @@ public class Game extends Canvas implements Runnable {
 
 	public static void main(String[] args) {
 		loadHighScores();
-		/*try {
-			File file = new File("./level.txt");
-			file.createNewFile();
-			FileWriter writer = new FileWriter(file, false);
-			PrintWriter pwOb = new PrintWriter(writer, false);
-			pwOb.flush();
-			for(int y=0; y<20; y++) {
-				StringBuilder line = new StringBuilder();
-				for(int x=0; x<10; x++) {
-					line.append("O");
-				}
-				pwOb.println(line);
-			}
-			pwOb.close();
-			writer.close();
-
-		} catch (IOException e) {
+		try {
+			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResourceAsStream("Tetris.ttf")));
+			// Tetris
+		} catch (IOException | FontFormatException e) {
 			e.printStackTrace();
-		}*/
+		}
 		canvas = new Game();
 	}
 

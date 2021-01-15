@@ -58,6 +58,14 @@ public class KeyInput extends KeyAdapter {
 			old[0] = true;
 			keysDown.put(e.getKeyCode(), old);
 			if(!old[1]) hold_timer = 0;
+		} else {
+			if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+				if(Game.gameState == GameState.game) {
+					Game.gameState = GameState.pauzed;
+				} else if(Game.gameState == GameState.pauzed){
+					Game.gameState = GameState.game;
+				}
+			}
 		}
 	}
 
