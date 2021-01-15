@@ -15,7 +15,7 @@ import java.util.Random;
 public class Game extends Canvas implements Runnable {
 	public static final int TILESIZE = 32;
 	public static final int PLAYSPACE_WIDTH = 12, PLAYSPACE_HEIGHT = 22;
-	public static final int SCREEN_WIDTH = TILESIZE*(PLAYSPACE_WIDTH+7), SCREEN_HEIGHT = TILESIZE*PLAYSPACE_HEIGHT;
+	public static final int SCREEN_WIDTH = TILESIZE*(PLAYSPACE_WIDTH+7), SCREEN_HEIGHT = TILESIZE*(PLAYSPACE_HEIGHT+1);
 	public static final String TITLE = "Tetris | NielzosFilms";
 
 	public static final float VOLUME = 0.3f;
@@ -331,6 +331,7 @@ public class Game extends Canvas implements Runnable {
 		} catch (IOException | FontFormatException e) {
 			e.printStackTrace();
 		}
+		SoundEffect.init();
 		canvas = new Game();
 	}
 

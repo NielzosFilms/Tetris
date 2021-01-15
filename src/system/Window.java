@@ -10,7 +10,7 @@ public class Window extends Canvas {
 	private static final int HEIGHT_OFFSET = 36;
 	
 	public Window(int width, int height, String title, Game game) {
-		height += HEIGHT_OFFSET;
+		//height += HEIGHT_OFFSET;
 		JFrame f = new JFrame(title);
 		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		f.setPreferredSize(new Dimension(width, height));
