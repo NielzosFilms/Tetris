@@ -28,7 +28,7 @@ public class Effect_Special_Text extends GameObject {
 
 	@Override
 	public void render(Graphics g) {
-		g.setFont(new Font("Arial", Font.BOLD, 20));
+		g.setFont(new Font("Tetris", Font.PLAIN, 20));
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (1f/original_lifetime*(lifetime))));
 		g.setColor(ColorPalette.blue.color);
