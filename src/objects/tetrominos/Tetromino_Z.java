@@ -10,8 +10,8 @@ import java.awt.*;
 import java.util.LinkedList;
 
 public class Tetromino_Z extends GameObject implements Tetromino {
-	private final Color COLOR = ColorPalette.red.color;
-	private final Color BORDER_COLOR = ColorPalette.purple.color;
+	private final Color COLOR = ColorPalette.tetromino_Z.color;
+	private final Color BORDER_COLOR = ColorPalette.tetromino_Z_border.color;
 	private LinkedList<GameObject> cubes = new LinkedList<GameObject>();
 
 	private int rotation = 0;

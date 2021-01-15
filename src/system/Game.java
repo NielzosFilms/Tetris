@@ -137,7 +137,7 @@ public class Game extends Canvas implements Runnable {
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
 			g.setFont(new Font("Tetris", Font.PLAIN, 30));
-			g.setColor(ColorPalette.light_blue.color);
+			g.setColor(ColorPalette.text_highlight.color);
 			g.drawString("Tetris", 128, 64);
 
 			g.setFont(new Font("Tetris", Font.PLAIN, 20));
@@ -176,7 +176,7 @@ public class Game extends Canvas implements Runnable {
 			g.drawString("[ESC]", 12*TILESIZE+8, 19*TILESIZE);
 			g.drawString("Pauze game", 14*TILESIZE, 19*TILESIZE);
 		} else if(gameState == GameState.game || gameState == GameState.pauzed) {
-			g.setColor(ColorPalette.light_blue.color);
+			g.setColor(ColorPalette.text_highlight.color);
 			g.setFont(new Font("Tetris", Font.PLAIN, 15));
 			g.drawString("Score :", 12*TILESIZE+8, 14*TILESIZE-8);
 			g.drawString(String.valueOf(current_score), 14*TILESIZE+8, 14*TILESIZE-8);
@@ -192,7 +192,7 @@ public class Game extends Canvas implements Runnable {
 				g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-				g.setColor(ColorPalette.light_blue.color);
+				g.setColor(ColorPalette.text_highlight.color);
 				g.setFont(new Font("Tetris", Font.PLAIN, 30));
 				g.drawString("Game Pauzed", 64, 64);
 
@@ -205,7 +205,7 @@ public class Game extends Canvas implements Runnable {
 			g.fillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 			g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
 
-			g.setColor(ColorPalette.light_blue.color);
+			g.setColor(ColorPalette.text_highlight.color);
 			g.setFont(new Font("Tetris", Font.PLAIN, 30));
 			g.drawString("Game Over!", 64, 64);
 			g.setFont(new Font("Tetris", Font.PLAIN, 20));
@@ -221,7 +221,7 @@ public class Game extends Canvas implements Runnable {
 			if(highscores.size() > 0) {
 				if(current_score == highscores.get(0)) {
 					g.setFont(new Font("Tetris", Font.PLAIN, 20));
-					g.setColor(ColorPalette.yellow.color);
+					g.setColor(ColorPalette.text_highscore.color);
 					g.drawString("NEW HIGHSCORE!", 64, 8*TILESIZE);
 				}
 			}
@@ -236,7 +236,7 @@ public class Game extends Canvas implements Runnable {
 		g.drawString("FPS: " + current_fps, 0, 16);
 
 		g.setFont(new Font("Tetris", Font.PLAIN, 10));
-		g.setColor(ColorPalette.light_blue.color);
+		g.setColor(ColorPalette.text_highlight.color);
 		g.drawString("Created By : NielzosFilms", 8, 22*TILESIZE-12);
 
 		g.dispose();
@@ -250,7 +250,7 @@ public class Game extends Canvas implements Runnable {
 		g.setFont(new Font("Tetris", Font.PLAIN, 15));
 		for(int i=0; i<5; i++) {
 			if(i == 0) {
-				g.setColor(ColorPalette.yellow.color);
+				g.setColor(ColorPalette.text_highscore.color);
 			} else g.setColor(ColorPalette.white.color);
 			if(i < highscores.size()) {
 				g.drawString(i+1 + " : " + highscores.get(i) + (highscores.get(i) == current_score ? "<-- YOU" : ""), 12*TILESIZE+8, 96 + i*20);

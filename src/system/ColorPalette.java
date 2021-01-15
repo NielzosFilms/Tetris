@@ -11,25 +11,34 @@ public enum ColorPalette {
 	white("#f4f4f4"),
 	black("#1a1c2c"),
 
-	light_gray("#94b0c2"),
-	gray("#566c86"),
-	dark_gray("#333c57"),
+	text_highlight("#73eff7"),
+	text_effect("#3b5dc9"),
+	text_highscore("#ffcd75"),
 
-	dark_blue("#29366f"),
-	blue("#3b5dc9"),
+	tetromino_I("#73eff7"),
+	tetromino_I_border("#41a6f6"),
 
-	dark_light_blue("#41a6f6"),
-	light_blue("#73eff7"),
+	tetromino_J("#ef7d57"),
+	tetromino_J_border("#b13e53"),
 
-	dark_green("#257179"),
-	green("#38b764"),
-	light_green("#a7f070"),
+	tetromino_L("#3b5dc9"),
+	tetromino_L_border("#29366f"),
 
-	purple("#5d275d"),
-	red("#b13e53"),
+	tetromino_O("#ffcd75"),
+	tetromino_O_border("#ef7d57"),
 
-	orange("#ef7d57"),
-	yellow("#ffcd75");
+	tetromino_S("#38b764"),
+	tetromino_S_border("#257179"),
+
+	tetromino_T("#5d275d"),
+	tetromino_T_border("#333c57"),
+
+	tetromino_Z("#b13e53"),
+	tetromino_Z_border("#5d275d"),
+
+	wall("#566c86"),
+	wall_border("#94b0c2");
+
 
 
 	public final String hex;

@@ -19,7 +19,7 @@ public class Wall extends GameObject {
 
 	@Override
 	public void render(Graphics g) {
-		Game.renderCube(g, x, y, ColorPalette.gray.color, ColorPalette.light_gray.color);
+		Game.renderCube(g, x, y, ColorPalette.wall.color, ColorPalette.wall_border.color);
 	}
 
 	@Override

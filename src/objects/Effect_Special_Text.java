@@ -31,7 +31,7 @@ public class Effect_Special_Text extends GameObject {
 		g.setFont(new Font("Tetris", Font.PLAIN, 20));
 		Graphics2D g2d = (Graphics2D) g;
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (1f/original_lifetime*(lifetime))));
-		g.setColor(ColorPalette.blue.color);
+		g.setColor(ColorPalette.text_effect.color);
 		g.drawString(text, x, y);
 		g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (1f)));
 	}

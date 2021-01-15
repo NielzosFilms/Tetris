@@ -28,7 +28,7 @@ public class Effect_Clear_Cube extends GameObject {
     public void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (0.3f/original_lifetime*(lifetime))));
-        Game.renderCube(g, x, y, ColorPalette.white.color, ColorPalette.light_blue.color);
+        Game.renderCube(g, x, y, ColorPalette.white.color, ColorPalette.text_highlight.color);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         //g.fillRect(x, y, TILESIZE, TILESIZE);
     }
