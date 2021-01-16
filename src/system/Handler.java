@@ -43,7 +43,7 @@ public class Handler {
 		if(Game.gameState == GameState.game) {
 			if (current_tetromino != null) {
 				if(canMove(0, 1)) {
-					if (timer >= (MAX_TIMER - (Game.current_level * 4))) {
+					if (timer >= (MAX_TIMER - (Game.current_level * 4))+1) {
 						timer = 0;
 						current_tetromino.setY(current_tetromino.getY() + Game.TILESIZE);
 					}
@@ -440,7 +440,7 @@ public class Handler {
 		holding_tetromino = null;
 		setNextTetromino();
 
-		Game.current_level = 1;
+		Game.current_level = Game.MAX_LEVEL;
 		Game.current_score = 0;
 		total_lines_cleared = 0;
 		can_hold = true;
