@@ -18,11 +18,11 @@ public enum ColorPalette {
 	tetromino_I("#73eff7"),
 	tetromino_I_border("#41a6f6"),
 
-	tetromino_J("#ef7d57"),
-	tetromino_J_border("#b13e53"),
+	tetromino_J("#3b5dc9"),
+	tetromino_J_border("#29366f"),
 
-	tetromino_L("#3b5dc9"),
-	tetromino_L_border("#29366f"),
+	tetromino_L("#ef7d57"),
+	tetromino_L_border("#b13e53"),
 
 	tetromino_O("#ffcd75"),
 	tetromino_O_border("#ef7d57"),
