@@ -440,7 +440,7 @@ public class Handler {
 		holding_tetromino = null;
 		setNextTetromino();
 
-		Game.current_level = Game.MAX_LEVEL;
+		Game.current_level = 1;
 		Game.current_score = 0;
 		total_lines_cleared = 0;
 		can_hold = true;
