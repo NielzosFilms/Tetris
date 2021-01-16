@@ -19,7 +19,12 @@ public class Wall extends GameObject {
 
 	@Override
 	public void render(Graphics g) {
-		Game.renderCube(g, x, y, ColorPalette.wall.color, ColorPalette.wall_border.color);
+		int line_width = (int) Game.stroke.getLineWidth();
+
+		g.setColor(ColorPalette.wall.color);
+		g.fillRect(x+ line_width/2, y+line_width/2, Game.TILESIZE-line_width, Game.TILESIZE-line_width);
+		g.setColor(ColorPalette.wall_border.color);
+		g.drawRect(x+line_width/2, y+line_width/2, Game.TILESIZE-line_width, Game.TILESIZE-line_width);
 	}
 
 	@Override

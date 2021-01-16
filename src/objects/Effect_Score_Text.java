@@ -24,7 +24,7 @@ public class Effect_Score_Text extends GameObject {
 	public void tick() {
 		lifetime--;
 		if(lifetime <= 0) {
-			Game.handler.removeObject(this);
+			handler.removeObject(this);
 		}
 		y += velY;
 	}

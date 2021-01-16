@@ -19,28 +19,28 @@ public class Game extends Canvas implements Runnable {
 	public static final String TITLE = "Tetris | NielzosFilms";
 
 	public static final float VOLUME = 0.3f;
-
-	public static Thread thread;
-	public static Canvas canvas;
-	public static boolean running = true;
-	public static int current_fps = 0;
-
-	public static Handler handler = new Handler();
-
-	public static KeyInput keyInput = new KeyInput();
-	public static MouseInput mouseInput = new MouseInput();
-
 	public static final BasicStroke stroke = new BasicStroke(4, BasicStroke.CAP_SQUARE, BasicStroke.JOIN_BEVEL);
 
-	public static int current_level = 1;
-	public static int current_score = 0;
+	public Thread thread;
+	public Canvas canvas;
+	public boolean running = true;
+	public int current_fps = 0;
+
+	public Handler handler = new Handler(this);
+
+	public KeyInput keyInput = new KeyInput(this);
+
+	public int current_level = 1;
+	public int current_score = 0;
 	public static final int MAX_LEVEL = 16;
 
-	public static GameState gameState = GameState.start_screen;
+	public GameState gameState = GameState.game;
 
-	public static LinkedList<Integer> highscores = new LinkedList<>();
+	//public LinkedList<Integer> highscores = new LinkedList<>();
 
-	public Game() {
+	public Game(int window_x, int window_y, int instance_index) {
+		canvas = this;
+
 		for(int x=0; x<SCREEN_WIDTH; x+=TILESIZE) {
 			handler.addObject(new Wall(x, 0));
 			handler.addObject(new Wall(x, (PLAYSPACE_HEIGHT*TILESIZE)-TILESIZE));
@@ -58,10 +58,10 @@ public class Game extends Canvas implements Runnable {
 		//handler.addObject(new Tetromino_I(64, 64));
 		//handler.setNextTetromino(160, 64);
 
+		handler.reset();
+
 		this.addKeyListener(keyInput);
-		this.addMouseListener(mouseInput);
-		this.addMouseMotionListener(mouseInput);
-		new Window(SCREEN_WIDTH, SCREEN_HEIGHT, TITLE, this);
+		new Window(window_x, window_y, SCREEN_WIDTH, SCREEN_HEIGHT, TITLE + " instance: " + instance_index, this);
 	}
 
 	public synchronized void start() {
@@ -145,7 +145,7 @@ public class Game extends Canvas implements Runnable {
 
 			g.drawString("Bindings :", 12*TILESIZE+8, 14*TILESIZE);
 
-			drawHighscores(g);
+			//drawHighscores(g);
 
 			g.setFont(new Font("Tetris", Font.PLAIN, 12));
 			g.setColor(ColorPalette.white.color);
@@ -216,15 +216,15 @@ public class Game extends Canvas implements Runnable {
 			g.drawString(String.valueOf(current_score), 176, 128);
 			g.drawString(String.valueOf(current_level), 176, 160);
 
-			drawHighscores(g);
+			//drawHighscores(g);
 
-			if(highscores.size() > 0) {
+			/*if(highscores.size() > 0) {
 				if(current_score == highscores.get(0)) {
 					g.setFont(new Font("Tetris", Font.PLAIN, 20));
 					g.setColor(ColorPalette.text_highscore.color);
 					g.drawString("NEW HIGHSCORE!", 64, 8*TILESIZE);
 				}
-			}
+			}*/
 
 			g.setColor(ColorPalette.white.color);
 			g.setFont(new Font("Tetris", Font.PLAIN, 20));
@@ -244,7 +244,19 @@ public class Game extends Canvas implements Runnable {
 		bs.show();
 	}
 
-	private void drawHighscores(Graphics g) {
+	public boolean playing() {
+		return gameState == GameState.game;
+	}
+
+	public int getScore() {
+		return current_score;
+	}
+
+	public int getLevel() {
+		return current_level;
+	}
+
+	/*private void drawHighscores(Graphics g) {
 		g.setFont(new Font("Tetris", Font.PLAIN, 20));
 		g.drawString("Highscores :", 12*TILESIZE+8, 64);
 		g.setFont(new Font("Tetris", Font.PLAIN, 15));
@@ -258,18 +270,9 @@ public class Game extends Canvas implements Runnable {
 				g.drawString(i+1 + " : ---", 12*TILESIZE+8, 96 + i*20);
 			}
 		}
-	}
+	}*/
 
-	public static void renderCube(Graphics g, int x, int y, Color bg, Color border) {
-		int line_width = (int) stroke.getLineWidth();
-
-		g.setColor(bg);
-		g.fillRect(x+ line_width/2, y+line_width/2, TILESIZE-line_width, TILESIZE-line_width);
-		g.setColor(border);
-		g.drawRect(x+line_width/2, y+line_width/2, TILESIZE-line_width, TILESIZE-line_width);
-	}
-
-	public static void addHighScore(int current_score) {
+	/*public static void addHighScore(int current_score) {
 		if(current_score == 0) return;
 		int index = 0;
 		boolean place_score = false;
@@ -287,9 +290,9 @@ public class Game extends Canvas implements Runnable {
 		} else {
 			highscores.add(current_score);
 		}
-	}
+	}*/
 
-	public static void saveHighScores() {
+	/*public static void saveHighScores() {
 		try {
 			File file = new File("./highscores.txt");
 			file.createNewFile();
@@ -305,9 +308,9 @@ public class Game extends Canvas implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
+	}*/
 
-	public static void loadHighScores() {
+	/*public static void loadHighScores() {
 		try {
 			File file = new File("./highscores.txt");
 			//FileWriter writer = new FileWriter(highscores);
@@ -320,19 +323,6 @@ public class Game extends Canvas implements Runnable {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	public static void main(String[] args) {
-		loadHighScores();
-		try {
-			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-			ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, ClassLoader.getSystemResourceAsStream("Tetris.ttf")));
-			// Tetris
-		} catch (IOException | FontFormatException e) {
-			e.printStackTrace();
-		}
-		SoundEffect.init();
-		canvas = new Game();
-	}
+	}*/
 
 }

@@ -24,7 +24,7 @@ public class Handler {
 	public boolean timer_slack = false;
 
 	private int total_lines_cleared = 0;
-	private int LINES_NEEDED_FOR_NEXT_LEVEL = 4 + Game.current_level;
+	private int LINES_NEEDED_FOR_NEXT_LEVEL = 0;
 
 	public boolean can_help_on_rotate = true;
 
@@ -34,16 +34,21 @@ public class Handler {
 
 	private boolean last_clear_tetris = false;
 
-	public Handler() {}
+	private Game game;
+
+	public Handler(Game game) {
+		this.game = game;
+		LINES_NEEDED_FOR_NEXT_LEVEL = 4 + game.current_level;
+	}
 
 	public void tick() {
 		for (int i = 0; i < objects.size(); i++) {
 			objects.get(i).tick();
 		}
-		if(Game.gameState == GameState.game) {
+		if(game.gameState == GameState.game) {
 			if (current_tetromino != null) {
 				if(canMove(0, 1)) {
-					if (timer >= (MAX_TIMER - (Game.current_level * 4))+1) {
+					if (timer >= (MAX_TIMER - (game.current_level * 4))+1) {
 						timer = 0;
 						current_tetromino.setY(current_tetromino.getY() + Game.TILESIZE);
 					}
@@ -60,11 +65,11 @@ public class Handler {
 			if (holding_tetromino != null) holding_tetromino.tick();
 			//checkFilledRow();
 
-			if (total_lines_cleared / LINES_NEEDED_FOR_NEXT_LEVEL >= Game.current_level) {
-				Game.current_level++;
-				LINES_NEEDED_FOR_NEXT_LEVEL = 3 + Game.current_level;
-				if (Game.current_level > Game.MAX_LEVEL) {
-					Game.current_level = Game.MAX_LEVEL;
+			if (total_lines_cleared / LINES_NEEDED_FOR_NEXT_LEVEL >= game.current_level) {
+				game.current_level++;
+				LINES_NEEDED_FOR_NEXT_LEVEL = 3 + game.current_level;
+				if (game.current_level > game.MAX_LEVEL) {
+					game.current_level = game.MAX_LEVEL;
 				} else {
 					SoundEffect.next_level.play();
 				}
@@ -74,10 +79,10 @@ public class Handler {
 					if(current_tetromino.getX() == 160 && current_tetromino.getY() == 64) {
 						for(GameObject cube : ((Tetromino)current_tetromino).getCubes()) {
 							if(cube.getBounds().intersects(objects.get(i).getBounds())) {
-								if(Game.gameState != GameState.end_screen) {
-									Game.gameState = GameState.end_screen;
-									Game.addHighScore(Game.current_score);
-									Game.saveHighScores();
+								if(game.gameState != GameState.end_screen) {
+									game.gameState = GameState.end_screen;
+									/*game.addHighScore(game.current_score);
+									game.saveHighScores();*/
 									SoundEffect.defeat.play();
 								}
 							}
@@ -85,7 +90,7 @@ public class Handler {
 					}
 				}
 			}
-		} else if(Game.gameState == GameState.end_screen) {
+		} else if(game.gameState == GameState.end_screen) {
 			current_tetromino = null;
 			tetromino_sequence.clear();
 			holding_tetromino = null;
@@ -127,6 +132,7 @@ public class Handler {
 	}
 
 	public void addObject(GameObject object) {
+		object.setHandler(this);
 		this.objects.add(object);
 	}
 
@@ -196,7 +202,7 @@ public class Handler {
 		}
 		moveTetromino(0, y_offset-1);
 		plantTetromino();
-		Game.current_score += y_offset*2;
+		game.current_score += y_offset*2;
 		timer = 0;
 	}
 
@@ -354,15 +360,15 @@ public class Handler {
 		int score_add = 0;
 
 		if(rows_cleared > 0 && cleared_lines_combo.size() > 1) {
-			score_add = calculateComboScore(cleared_lines_combo, Game.current_level);
+			score_add = calculateComboScore(cleared_lines_combo, game.current_level);
 		} else  {
-			score_add = calculateScore(rows_cleared, Game.current_level);
+			score_add = calculateScore(rows_cleared, game.current_level);
 			if(rows_cleared == 0) {
 				cleared_lines_combo.clear();
 			}
 		}
 		if(score_add > 0) {
-			Game.current_score += score_add;
+			game.current_score += score_add;
 			addObject(new Effect_Score_Text("+" + score_add));
 		}
 	}
@@ -440,8 +446,8 @@ public class Handler {
 		holding_tetromino = null;
 		setNextTetromino();
 
-		Game.current_level = 1;
-		Game.current_score = 0;
+		game.current_level = 1;
+		game.current_score = 0;
 		total_lines_cleared = 0;
 		can_hold = true;
 	}

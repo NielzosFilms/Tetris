@@ -22,7 +22,7 @@ public class Effect_Special_Text extends GameObject {
 	public void tick() {
 		lifetime--;
 		if(lifetime <= 0) {
-			Game.handler.removeObject(this);
+			handler.removeObject(this);
 		}
 	}
 

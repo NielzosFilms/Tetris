@@ -20,7 +20,7 @@ public class Effect_Clear_Cube extends GameObject {
     public void tick() {
         lifetime--;
         if(lifetime <= 0) {
-            Game.handler.removeObject(this);
+            handler.removeObject(this);
         }
     }
 
@@ -28,7 +28,12 @@ public class Effect_Clear_Cube extends GameObject {
     public void render(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (0.3f/original_lifetime*(lifetime))));
-        Game.renderCube(g, x, y, ColorPalette.white.color, ColorPalette.text_highlight.color);
+        int line_width = (int) Game.stroke.getLineWidth();
+
+        g.setColor( ColorPalette.white.color);
+        g.fillRect(x+ line_width/2, y+line_width/2, Game.TILESIZE-line_width, Game.TILESIZE-line_width);
+        g.setColor(ColorPalette.text_highlight.color);
+        g.drawRect(x+line_width/2, y+line_width/2, Game.TILESIZE-line_width, Game.TILESIZE-line_width);
         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f));
         //g.fillRect(x, y, TILESIZE, TILESIZE);
     }

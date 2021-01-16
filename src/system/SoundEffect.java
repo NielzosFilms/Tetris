@@ -46,7 +46,7 @@ public enum SoundEffect {
 		gain.setValue(dB);
 	}
 
-	static void init() {
+	public static void init() {
 		values(); // calls the constructor for all the elements
 	}
 }

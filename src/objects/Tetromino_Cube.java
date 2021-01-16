@@ -38,7 +38,12 @@ public class Tetromino_Cube extends GameObject implements Cloneable {
 
 	@Override
 	public void render(Graphics g) {
-		Game.renderCube(g, x, y, color, border_color);
+		int line_width = (int) Game.stroke.getLineWidth();
+
+		g.setColor(color);
+		g.fillRect(x+ line_width/2, y+line_width/2, Game.TILESIZE-line_width, Game.TILESIZE-line_width);
+		g.setColor(border_color);
+		g.drawRect(x+line_width/2, y+line_width/2, Game.TILESIZE-line_width, Game.TILESIZE-line_width);
 		//g.setColor(color);
 		//g.drawRect(x, y, Game.TILESIZE, Game.TILESIZE);
 	}

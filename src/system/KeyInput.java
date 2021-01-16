@@ -5,8 +5,8 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 
 public class KeyInput extends KeyAdapter {
-	private Handler handler = Game.handler;
-	public static HashMap<Integer, Boolean[]> keysDown = new HashMap<>();
+	private Handler handler;
+	public HashMap<Integer, Boolean[]> keysDown = new HashMap<>();
 
 	private int hold_timer = 0;
 	private final int hold_threshold = 15;
@@ -14,7 +14,11 @@ public class KeyInput extends KeyAdapter {
 	private int move_speed_timer = 0;
 	private final int move_speed = 2;
 
-	public KeyInput() {
+	private Game game;
+
+	public KeyInput(Game game) {
+		this.game = game;
+		this.handler = game.handler;
 		keysDown.put(KeyEvent.VK_RIGHT, new Boolean[]{false, false});
 		keysDown.put(KeyEvent.VK_LEFT, new Boolean[]{false, false});
 		keysDown.put(KeyEvent.VK_DOWN, new Boolean[]{false, false});
@@ -33,7 +37,7 @@ public class KeyInput extends KeyAdapter {
 					Boolean[] old = keysDown.get(key);
 					old[1] = true;
 				}
-				if(Game.gameState == GameState.game) {
+				if(game.gameState == GameState.game) {
 					if (hold_timer >= hold_threshold) {
 						if (move_speed_timer >= move_speed) {
 							doKeyFunction(key);
@@ -54,7 +58,7 @@ public class KeyInput extends KeyAdapter {
 			old[0] = true;
 			keysDown.put(e.getKeyCode(), old);
 			if(!old[1]) hold_timer = 0;
-		} else {
+		} /*else {
 			if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 				if(Game.gameState == GameState.game) {
 					Game.gameState = GameState.pauzed;
@@ -62,7 +66,7 @@ public class KeyInput extends KeyAdapter {
 					Game.gameState = GameState.game;
 				}
 			}
-		}
+		}*/
 	}
 
 	public void keyReleased(KeyEvent e) {
@@ -76,7 +80,7 @@ public class KeyInput extends KeyAdapter {
 	}
 
 	private void doKeyFunction(int keyCode) {
-		if(Game.gameState == GameState.game) {
+		if(game.gameState == GameState.game) {
 			switch(keyCode) {
 				case KeyEvent.VK_RIGHT:
 					if(!handler.canMove(0, 1)) handler.timer_slack = true;
@@ -88,7 +92,7 @@ public class KeyInput extends KeyAdapter {
 					break;
 				case KeyEvent.VK_DOWN:
 					handler.moveTetromino(0, 1);
-					Game.current_score += 1;
+					game.current_score += 1;
 					break;
 				case KeyEvent.VK_UP:
 					if(!handler.canMove(0, 1)) handler.timer_slack = true;
@@ -111,7 +115,7 @@ public class KeyInput extends KeyAdapter {
 					handler.reset();
 					break;
 			}
-		} else if(Game.gameState == GameState.start_screen) {
+		} /*else if(Game.gameState == GameState.start_screen) {
 			switch(keyCode) {
 				case KeyEvent.VK_SPACE:
 					Game.gameState = GameState.game;
@@ -126,6 +130,6 @@ public class KeyInput extends KeyAdapter {
 					Game.gameState = GameState.start_screen;
 					break;
 			}
-		}
+		}*/
 	}
 }

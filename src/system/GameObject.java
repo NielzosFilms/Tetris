@@ -3,6 +3,8 @@ package system;
 import java.awt.*;
 
 public abstract class GameObject {
+	protected Handler handler;
+
 	protected final int TILESIZE = Game.TILESIZE;
 	protected int x, y;
 	protected float velX, velY;
@@ -57,5 +59,13 @@ public abstract class GameObject {
 
 	public void setId(ID id) {
 		this.id = id;
+	}
+
+	public Handler getHandler() {
+		return handler;
+	}
+
+	public void setHandler(Handler handler) {
+		this.handler = handler;
 	}
 }
