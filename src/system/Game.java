@@ -1,5 +1,6 @@
 package system;
 
+import ai.AI_Controller;
 import objects.Tetromino_Cube;
 import objects.Wall;
 import objects.tetrominos.Tetromino_I;
@@ -29,6 +30,8 @@ public class Game extends Canvas implements Runnable {
 	public Handler handler = new Handler(this);
 
 	public KeyInput keyInput = new KeyInput(this);
+
+	public AI_Controller ai_controller = new AI_Controller(this);
 
 	public int current_level = 1;
 	public int current_score = 0;
@@ -111,6 +114,7 @@ public class Game extends Canvas implements Runnable {
 	private void tick() {
 		keyInput.tick();
 		handler.tick();
+		ai_controller.tick();
 	}
 
 	private void render() {

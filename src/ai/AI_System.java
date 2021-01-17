@@ -20,13 +20,18 @@ public class AI_System {
         }
         SoundEffect.init();
 
-        game_instances.add(new Game(100, 100, 0));
-        game_instances.add(new Game(800, 100, 1));
+        while(true) {
 
-        while(gameIsRunning()) {
+            game_instances.add(new Game(0, 100, 0));
+            game_instances.add(new Game(600, 100, 1));
+            game_instances.add(new Game(1200, 100, 2));
+            game_instances.add(new Game(1800, 100, 2));
 
+            while (gameIsRunning()) {
+
+            }
+            game_instances.clear();
         }
-        System.out.println("Game Over");
     }
 
     private static boolean gameIsRunning() {

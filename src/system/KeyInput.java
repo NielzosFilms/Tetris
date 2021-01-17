@@ -79,7 +79,7 @@ public class KeyInput extends KeyAdapter {
 		}
 	}
 
-	private void doKeyFunction(int keyCode) {
+	public void doKeyFunction(int keyCode) {
 		if(game.gameState == GameState.game) {
 			switch(keyCode) {
 				case KeyEvent.VK_RIGHT:
@@ -115,7 +115,15 @@ public class KeyInput extends KeyAdapter {
 					handler.reset();
 					break;
 			}
-		} /*else if(Game.gameState == GameState.start_screen) {
+		} else if(game.gameState == GameState.end_screen) {
+			switch(keyCode) {
+				case KeyEvent.VK_R:
+					SoundEffect.blip.play();
+					handler.reset();
+					game.gameState = GameState.game;
+					break;
+			}
+		}/*else if(Game.gameState == GameState.start_screen) {
 			switch(keyCode) {
 				case KeyEvent.VK_SPACE:
 					Game.gameState = GameState.game;

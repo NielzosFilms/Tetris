@@ -7,6 +7,7 @@ import objects.Tetromino_Cube;
 import objects.tetrominos.*;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Random;
@@ -151,6 +152,8 @@ public class Handler {
 	public boolean canMove(int x_offset, int y_offset) {
 		if(current_tetromino == null) return false;
 		for(GameObject cube : ((Tetromino)current_tetromino).getCubes()) {
+			if(cube.getX() + (x_offset * Game.TILESIZE) >= ((Game.PLAYSPACE_WIDTH-1)*Game.TILESIZE)) return false;
+			if(cube.getX() + (x_offset * Game.TILESIZE) <= 0) return false;
 			for(int i=0; i< objects.size(); i++) {
 				GameObject object = objects.get(i);
 				if(object.getId() == ID.wall || object.getId() == ID.tetromino_cube) {
@@ -319,6 +322,18 @@ public class Handler {
 		setNextTetromino();
 		SoundEffect.place.play();
 		checkFilledRow();
+	}
+
+	public LinkedList<GameObject> getPlantedTetrominoField() {
+		LinkedList<GameObject> tmp_objects = new LinkedList<>(objects);
+		if(current_tetromino == null) return null;
+		for(GameObject c : ((Tetromino)current_tetromino).getCubes()) {
+			Tetromino_Cube cube = (Tetromino_Cube) c;
+			cube.tick();
+			cube.clearParent();
+		}
+		tmp_objects.addAll(((Tetromino)current_tetromino).getCubes());
+		return tmp_objects;
 	}
 
 	private void checkFilledRow() {
@@ -613,5 +628,16 @@ public class Handler {
 		int index = cleared_lines_combo.size()-1;
 		addObject(new Effect_Special_Text(cleared_lines_combo.size() + " x Combo"));
 		return cleared_lines_combo.get(index)*current_level+50*current_level;
+	}
+
+	public LinkedList<GameObject> getObjectsByID(ID[] ids) {
+		LinkedList<GameObject> ret = new LinkedList<>();
+		LinkedList<ID> ids_convert = new LinkedList<>(Arrays.asList(ids));
+		for(int i=0; i<objects.size(); i++) {
+			if(ids_convert.contains(objects.get(i).getId())) {
+				ret.add(objects.get(i));
+			}
+		}
+		return ret;
 	}
 }
