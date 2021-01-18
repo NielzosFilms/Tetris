@@ -100,7 +100,7 @@ It creates a list of the 7 Tetromino's shuffles it,<br/>
 and adds it to the queue.
 
 ## My highscore's
-- 15-01-2021
+- 16-01-2021
 1. 802930
 1. 407074
 1. 352247
